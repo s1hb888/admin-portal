@@ -1,0 +1,21 @@
+/* Sidebar & Dashboard Layout */
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+  background-color: #fff;
+  border-right: 1px solid #e5e7eb;
+  width: 16rem;
+}
+
+.info-box {
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+.info-box:hover {
+  transform: scale(1.02);
+}

@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Scrollbar for Sidebar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2BCB9A;
+  border-radius: 10px;
+}
+
+/* Hover effect on sidebar nav items */
+li:hover {
+  background-color: #2BCB9A !important;
+  transition: background-color 0.3s;
+}
+
+/* Cards text styling */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.card-body p {
+  font-size: 0.9rem;
+  color: #555;
+}
