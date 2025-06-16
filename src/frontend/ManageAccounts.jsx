@@ -1,128 +1,174 @@
-import React, { useState } from 'react';
-import { Button, Modal, Form, Alert, Card, Row, Col } from 'react-bootstrap';
-import { Edit, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Button, Alert, Card, Row, Col, Spinner } from 'react-bootstrap';
+import axios from 'axios';
+import Sidebar from '../components/Sidebar';
+import TopNavbar from '../components/TopNavbar';
+import { FaEnvelope, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const themeGreen = '#2BCB9A';
-const themeYellow = '#FFD700';
-
-const initialAccounts = [
-  { email: 'parent1@example.com', kidName: 'Ali', age: 5 },
-  { email: 'parent2@example.com', kidName: 'Ayesha', age: 6 },
-];
+const themeYellow = '#FFCF25';
+const lightYellow = '#FFF9C4';
+const lightGreen = '#E9FBF6';
+const black = '#000';
 
 const ManageAccounts = () => {
-  const [accounts, setAccounts] = useState(initialAccounts);
-  const [showModal, setShowModal] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [form, setForm] = useState({ email: '', kidName: '', age: '' });
-  const [error, setError] = useState('');
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [hoveredCard, setHoveredCard] = useState(null); // for hover effect
 
-  const openModal = (index) => {
-    setEditingIndex(index);
-    setForm(accounts[index]);
-    setError('');
-    setShowModal(true);
-  };
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/users');
+        setAccounts(res.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to fetch accounts:', err);
+        setLoading(false);
+      }
+    };
 
-  const handleDelete = (index) => {
-    if (window.confirm('Are you sure you want to delete this account?')) {
-      const updated = accounts.filter((_, i) => i !== index);
+    fetchAccounts();
+  }, []);
+
+  const toggleStatus = async (id) => {
+    try {
+      const res = await axios.put(`http://localhost:5000/api/users/toggle-status/${id}`);
+      const updated = accounts.map((acc) => (acc._id === id ? res.data : acc));
       setAccounts(updated);
+    } catch (err) {
+      console.error('Failed to toggle status:', err);
     }
-  };
-
-  const handleSave = () => {
-    const { email, kidName, age } = form;
-    if (!email || !kidName || !age) {
-      setError('All fields are required.');
-      return;
-    }
-    const updated = [...accounts];
-    updated[editingIndex] = form;
-    setAccounts(updated);
-    setShowModal(false);
   };
 
   return (
-    <div className="container my-5" style={{ maxWidth: '900px' }}>
-      <h2 className="mb-4" style={{ color: themeGreen }}>Manage Parent Accounts</h2>
+    <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#ffffff' }}>
+      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <TopNavbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-      {accounts.length === 0 ? (
-        <Alert style={{ backgroundColor: themeYellow, fontWeight: '500' }}>
-          No parent accounts found.
-        </Alert>
-      ) : (
-        <Row xs={1} md={2} className="g-4">
-          {accounts.map((acc, index) => (
-            <Col key={index}>
-              <Card style={{ borderColor: themeGreen }}>
-                <Card.Body>
-                  <Card.Title style={{ color: themeGreen }}>{acc.kidName}</Card.Title>
-                  <Card.Text><strong>Email:</strong> {acc.email}</Card.Text>
-                  <Card.Text><strong>Age:</strong> {acc.age}</Card.Text>
-                  <div className="d-flex justify-content-end">
-                    <Button
-                      size="sm"
-                      className="me-2"
-                      style={{ backgroundColor: themeYellow, borderColor: themeYellow, color: '#000' }}
-                      onClick={() => openModal(index)}
-                    >
-                      <Edit size={14} className="me-1" /> Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => handleDelete(index)}
-                    >
-                      <Trash2 size={14} className="me-1" /> Delete
-                    </Button>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
+      <main
+        style={{
+          marginLeft: sidebarOpen ? '295px' : '0',
+          padding: '2rem',
+          marginTop: '0px',
+          minHeight: '100vh',
+          backgroundColor: '#ffffff',
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <h2
+            className="mb-4"
+            style={{
+              color: themeGreen,
+              textAlign: 'center',
+              fontWeight: '700',
+              fontSize: '2rem',
+              marginTop: '0px',
+            }}
+          >
+            User Account Management
+          </h2>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton style={{ backgroundColor: themeGreen, color: 'white' }}>
-          <Modal.Title>Edit Account</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              style={{ borderColor: themeGreen, boxShadow: `0 0 0 0.2rem ${themeGreen}40` }}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Kid’s Name</Form.Label>
-            <Form.Control
-              type="text"
-              value={form.kidName}
-              onChange={(e) => setForm({ ...form, kidName: e.target.value })}
-              style={{ borderColor: themeGreen, boxShadow: `0 0 0 0.2rem ${themeGreen}40` }}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Age</Form.Label>
-            <Form.Control
-              type="number"
-              value={form.age}
-              onChange={(e) => setForm({ ...form, age: e.target.value })}
-              style={{ borderColor: themeGreen, boxShadow: `0 0 0 0.2rem ${themeGreen}40` }}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button style={{ backgroundColor: '#aaa', borderColor: '#aaa', color: 'white' }} onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button style={{ backgroundColor: themeGreen, borderColor: themeGreen }} onClick={handleSave}>Update</Button>
-        </Modal.Footer>
-      </Modal>
+          {loading ? (
+            <div className="d-flex justify-content-center mt-5">
+              <Spinner animation="border" variant="success" />
+            </div>
+          ) : accounts.length === 0 ? (
+            <Alert style={{ backgroundColor: themeYellow, fontWeight: '500' }}>
+              No parent accounts found.
+            </Alert>
+          ) : (
+            <Row xs={1} md={2} className="g-4">
+              {accounts.map((acc, index) => (
+                <Col key={index}>
+                  <Card
+  onMouseEnter={() => setHoveredCard(index)}
+  onMouseLeave={() => setHoveredCard(null)}
+  style={{
+    borderColor: themeGreen,
+    borderRadius: '12px',
+    backgroundColor:
+      hoveredCard === index
+        ? themeGreen
+        : acc.isActive
+        ? lightGreen
+        : lightYellow,
+    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.06)',
+    transition: 'all 0.4s ease',
+    opacity: acc.isActive ? 1 : 0.75,
+    transform: hoveredCard === index ? 'translateY(-5px)' : 'translateY(0)', // ✅ added move effect
+  }}
+  className="h-100"
+>
+
+                    <Card.Body>
+                      <Card.Title
+                        style={{
+                          color: themeYellow,
+                          fontSize: '1.3rem',
+                          fontWeight: '600',
+                          marginBottom: '1rem',
+                        }}
+                      >
+                        {acc.kidName}
+                      </Card.Title>
+
+                      <Card.Text
+                        style={{
+                          color: black,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        <FaEnvelope /> <strong>Email:</strong> {acc.email}
+                      </Card.Text>
+
+                      <Card.Text
+                        style={{
+                          color: acc.isActive ? 'green' : 'red',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <strong>Status:</strong>{' '}
+                        {acc.isActive ? (
+                          <>
+                            <FaCheckCircle /> Active
+                          </>
+                        ) : (
+                          <>
+                            <FaTimesCircle /> Inactive
+                          </>
+                        )}
+                      </Card.Text>
+
+                      <div className="d-flex justify-content-end mt-3">
+                        <Button
+                          size="sm"
+                          style={{
+                            backgroundColor: acc.isActive ? '#EF3349' : themeGreen,
+                            borderColor: acc.isActive ? '#EF3349' : themeGreen,
+                            fontWeight: '500',
+                            color: '#fff',
+                          }}
+                          onClick={() => toggleStatus(acc._id)}
+                        >
+                          {acc.isActive ? 'Deactivate' : 'Activate'}
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          )}
+        </div>
+      </main>
     </div>
   );
 };

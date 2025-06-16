@@ -2,10 +2,18 @@ import React, { useState, useRef } from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { UploadCloud, Tag, FileText, List } from 'lucide-react';
 import TopNavbar from '../components/TopNavbar';
+import Sidebar from '../components/Sidebar';
+import axios from 'axios';
 
-const categories = ['Math', 'English', 'Islamic Studies'];
+const categories = ['Academic Learning', 'General Knowledge'];
 
-const green = '#2BCB9A';
+const colors = {
+  primary: '#2BCB9A', 
+  danger: '#EF3349',  
+  warning: '#FFCF25', 
+  text: '#222',
+  background: '#FAFAFA',
+};
 
 const UploadVideos = () => {
   const [videoFile, setVideoFile] = useState(null);
@@ -16,6 +24,7 @@ const UploadVideos = () => {
   const [warnings, setWarnings] = useState([]);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const videoRef = useRef(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const MAX_FILE_SIZE_MB = 400;
   const MAX_TITLE_LENGTH = 50;
@@ -31,24 +40,11 @@ const UploadVideos = () => {
     }
 
     if (bytesToMB(file.size) > MAX_FILE_SIZE_MB) {
-      errs.push(`File size exceeds the ${MAX_FILE_SIZE_MB}MB limit. Please upload a smaller file.`);
+      errs.push(`File size exceeds ${MAX_FILE_SIZE_MB}MB. Please upload a smaller file.`);
     }
 
     setErrors(errs);
     setWarnings(warns);
-  };
-
-  const checkResolution = () => {
-    const videoEl = videoRef.current;
-    if (videoEl) {
-      if (videoEl.videoWidth < 1280 || videoEl.videoHeight < 720) {
-        setWarnings([
-          'Low-resolution video detected. Upload a higher-quality video for better learning experience.',
-        ]);
-      } else {
-        setWarnings([]);
-      }
-    }
   };
 
   const handleFileChange = (e) => {
@@ -65,163 +61,175 @@ const UploadVideos = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = [];
 
-    setErrors([]);
-    setWarnings([]);
-    setUploadSuccess(false);
+    if (!videoFile) newErrors.push('Please select a video file.');
+    if (title.trim() === '') newErrors.push('Title is required.');
+    if (title.length > MAX_TITLE_LENGTH) newErrors.push(`Title can't exceed ${MAX_TITLE_LENGTH} characters.`);
 
-    if (!videoFile) {
-      setErrors(['Please select a video file to upload.']);
-      return;
+    if (videoFile) {
+      if (!videoFile.name.toLowerCase().endsWith('.mp4')) {
+        newErrors.push('Invalid file format. Only MP4 allowed.');
+      }
+      if (bytesToMB(videoFile.size) > MAX_FILE_SIZE_MB) {
+        newErrors.push(`File too large. Max size is ${MAX_FILE_SIZE_MB}MB.`);
+      }
     }
 
-    if (title.trim() === '') {
-      setErrors(['Title is required.']);
-      return;
-    }
+    setErrors(newErrors);
+    if (newErrors.length > 0) return;
 
-    if (title.length > MAX_TITLE_LENGTH) {
-      setErrors([`Title cannot exceed ${MAX_TITLE_LENGTH} characters.`]);
-      return;
-    }
+    try {
+      const formData = new FormData();
+      formData.append('video', videoFile);
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('category', category);
 
-    if (errors.length === 0) {
+      const response = await axios.post('http://localhost:5000/api/upload-video', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
       setUploadSuccess(true);
-
       setVideoFile(null);
       setTitle('');
       setDescription('');
       setCategory(categories[0]);
       e.target.reset();
+    } catch (err) {
+      console.error(err);
+      setErrors(['Upload failed. Please try again.']);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9f9f9' }}>
-      
-      {/* Centered Top Navbar */}
-      {/* Full width top navbar with centered content */}
-<div style={{ width: '100%', borderBottom: `2px solid ${green}`, paddingBottom: '8px' }}>
-  <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-    <TopNavbar />
-  </div>
-</div>
+    <div style={{ minHeight: '100vh', backgroundColor: colors.background }}>
+      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <TopNavbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 16px' }}>
+        <div
+          style={{
+            backgroundColor: '#fff',
+            borderRadius: '16px',
+            padding: '32px',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
+          }}
+        >
+          <h3
+            style={{
+              color: colors.primary,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              fontWeight: '600',
+              marginBottom: '20px',
+            }}
+          >
+            <UploadCloud size={26} />
+            Upload Educational Video
+          </h3>
 
-      {/* Smaller container to fit screen */}
-      <div className="container my-4" style={{ maxWidth: '600px', minHeight: '75vh', padding: '20px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 10px rgb(0 0 0 / 0.1)' }}>
-        
-        <h2 className="mb-3" style={{ color: green, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <UploadCloud size={28} />
-          Upload Videos
-        </h2>
-        <p className="mb-4 text-muted" style={{ fontSize: '0.9rem' }}>
-          Upload animated videos focusing on educational topics like shapes, numbers, and basic Islamic knowledge.
-        </p>
+          <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '28px' }}>
+            Add animated content on topics like shapes, numbers, or Islamic knowledge to the PrepPal library.
+          </p>
 
-        <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit}>
+            {/* Video Input */}
+            <Form.Group className="mb-4">
+              <Form.Label style={{ fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <UploadCloud size={18} style={{ color: colors.primary }} />
+                Video File (MP4)
+              </Form.Label>
+              <Form.Control type="file" accept=".mp4" onChange={handleFileChange} />
+            </Form.Group>
 
-          {/* Video Input */}
-          <Form.Group controlId="videoFile" className="mb-3">
-            <Form.Label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500' }}>
-              <UploadCloud size={20} style={{ color: green }} />
-              Select Video
-            </Form.Label>
-            <Form.Control type="file" accept=".mp4" onChange={handleFileChange} />
-            {videoFile && (
-              <video
-                ref={videoRef}
-                src={URL.createObjectURL(videoFile)}
-                onLoadedMetadata={checkResolution}
-                style={{ display: 'none' }}
+            {/* Title */}
+            <Form.Group className="mb-4">
+              <Form.Label style={{ fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FileText size={18} style={{ color: colors.primary }} />
+                Video Title
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter video title"
+                value={title}
+                maxLength={MAX_TITLE_LENGTH}
+                onChange={(e) => setTitle(e.target.value)}
               />
-            )}
-          </Form.Group>
+              <Form.Text muted>{title.length} / {MAX_TITLE_LENGTH}</Form.Text>
+            </Form.Group>
 
-          {/* Title */}
-          <Form.Group controlId="title" className="mb-3">
-            <Form.Label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500' }}>
-              <FileText size={18} style={{ color: green }} />
-              Title <small className="text-muted">(max 50 characters)</small>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter video title"
-              maxLength={MAX_TITLE_LENGTH}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <Form.Text muted>{title.length} / {MAX_TITLE_LENGTH}</Form.Text>
-          </Form.Group>
+            {/* Description */}
+            <Form.Group className="mb-4">
+              <Form.Label style={{ fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Tag size={18} style={{ color: colors.primary }} />
+                Description
+              </Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Brief description of the content"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
 
-          {/* Description */}
-          <Form.Group controlId="description" className="mb-3">
-            <Form.Label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500' }}>
-              <Tag size={18} style={{ color: green }} />
-              Description
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Brief summary of the video content"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Form.Group>
+            {/* Category */}
+            <Form.Group className="mb-4">
+              <Form.Label style={{ fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <List size={18} style={{ color: colors.primary }} />
+                Category
+              </Form.Label>
+              <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-          {/* Category */}
-          <Form.Group controlId="category" className="mb-4">
-            <Form.Label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500' }}>
-              <List size={18} style={{ color: green }} />
-              Category
-            </Form.Label>
-            <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
-          {/* Errors */}
-          {errors.length > 0 &&
-            errors.map((err, idx) => (
+            {/* Feedback */}
+            {errors.map((err, idx) => (
               <Alert variant="danger" key={idx}>
                 {err}
               </Alert>
             ))}
 
-          {/* Warnings */}
-          {warnings.length > 0 &&
-            warnings.map((warn, idx) => (
+            {warnings.map((warn, idx) => (
               <Alert variant="warning" key={idx}>
                 {warn}
               </Alert>
             ))}
 
-          {/* Success message */}
-          {uploadSuccess && (
-            <Alert variant="success">
-              Video uploaded successfully!
-            </Alert>
-          )}
+            {uploadSuccess && (
+              <Alert variant="success">Video uploaded successfully!</Alert>
+            )}
 
-          <Button
-            type="submit"
-            style={{ backgroundColor: green, borderColor: green }}
-            className="w-100 d-flex align-items-center justify-content-center gap-2"
-          >
-            <UploadCloud size={20} /> Upload Video
-          </Button>
-        </Form>
+            {/* Submit */}
+            <Button
+              type="submit"
+              style={{
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
+                fontWeight: '600',
+                fontSize: '1rem',
+                padding: '10px',
+                borderRadius: '10px',
+              }}
+              className="w-100 d-flex align-items-center justify-content-center gap-2"
+            >
+              <UploadCloud size={20} />
+              Upload Video
+            </Button>
+          </Form>
+        </div>
       </div>
     </div>
   );
 };
 
 export default UploadVideos;
-
-

@@ -1,0 +1,43 @@
+.heading-bar {
+  margin: 0 !important;
+  padding: 0.5rem 0;
+}
+
+.page-heading {
+  color: #2BCB9A;
+  font-weight: 600;
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.video-card {
+  background-color: #e6f8f3; /* Light green */
+  border: 2px solid #2BCB9A;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.video-card:hover {
+  border-color: #249c7a !important;
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(36, 156, 122, 0.3);
+}
+
+.card.video-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.card-footer {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  background-color: #e6f8f3 !important;
+  border-top: 1px solid #d2f0e6;
+}

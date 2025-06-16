@@ -1,51 +1,56 @@
 import React from 'react'; 
+import { Video } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   BookOpen,
   Mic,
-  Upload,
   Users,
   User,
   LogIn,
   LogOut,
-  Menu, // Hamburger icon
+  Menu,
 } from 'lucide-react';
 
 const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const red = '#EF3349';
+  const lightGreen = '#e1f8f2';
+  const green = '#2BCB9A';
+
   const navItems = [
-    { label: 'Dashboard', icon: <LayoutDashboard size={18} />, path: '/admin' },
-    { label: 'Courses', icon: <BookOpen size={18} />, path: '/admin/manage-courses' },
-    { label: 'Quizzes', icon: <Mic size={18} />, path: '/admin/manage-quizzes' },
-    { label: 'Upload Videos', icon: <Upload size={18} />, path: '/admin/upload-videos' },
-    { label: 'Manage Accounts', icon: <Users size={18} />, path: '/admin/manage-accounts' },
-    { label: 'Profile', icon: <User size={18} />, path: '/admin/profile' },
-    { label: 'Login', icon: <LogIn size={18} />, path: '/admin/login' },
-    { label: 'Logout', icon: <LogOut size={18} />, path: '/admin/logout' },
+    { label: 'Dashboard', icon: <LayoutDashboard size={18} color={red} />, path: '/ ' },
+    { label: 'Courses', icon: <BookOpen size={18} color={red} />, path: '/admin/manage-courses' },
+    { label: 'Quizzes', icon: <Mic size={18} color={red} />, path: '/admin/manage-quizzes' },
+    { label: 'Manage Videos', icon: <Video size={18} color={red} />, path: '/admin/manage-videos' },
+    { label: 'Manage Accounts', icon: <Users size={18} color={red} />, path: '/admin/manage-accounts' },
+    { label: 'Profile', icon: <User size={18} color={red} />, path: '/admin/profile' },
+    { label: 'Login', icon: <LogIn size={18} color={red} />, path: '/admin/login' },
+    { label: 'Logout', icon: <LogOut size={18} color={red} />, path: '/admin/logout' },
   ];
 
   return (
     <div
       style={{
-        width: sidebarOpen ? '250px' : '0',
-        backgroundColor: '#2BCB9A',
-        color: 'white',
+        width: sidebarOpen ? '295px' : '0',
+        backgroundColor: lightGreen,
+        color: '#333',
         height: '100vh',
         position: 'fixed',
         top: 0,
         left: 0,
         overflowX: 'hidden',
-        transition: 'width 0.3s ease',
+        transition: 'width 0.5s ease',
         boxShadow: sidebarOpen ? '2px 0 8px rgba(0,0,0,0.15)' : 'none',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
+        
       }}
     >
-      {/* Toggle button (only visible when sidebar is open) */}
+      {/* Toggle button */}
       {sidebarOpen && (
         <div
           style={{
@@ -53,7 +58,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
             display: 'flex',
             alignItems: 'center',
             padding: '0 20px',
-            borderBottom: '2px solid #2BCB9A',
+            borderBottom: `3px solid rgba(239, 51, 73, 0.9)`, // consistent with top navbar
             cursor: 'pointer',
             justifyContent: 'flex-end',
             userSelect: 'none',
@@ -61,11 +66,11 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
           onClick={toggleSidebar}
           title="Hide Sidebar"
         >
-          <Menu size={24} color="white" />
+          <Menu size={24} color={red} />
         </div>
       )}
 
-      {/* Menu items */}
+      {/* Menu Items */}
       <div
         style={{
           flex: 1,
@@ -80,9 +85,9 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
           style={{
             fontWeight: '700',
             letterSpacing: '1.2px',
-            color: 'white',
+            color: green, // changed to match home screen
             textAlign: 'center',
-            marginBottom: '30px',
+            marginBottom: '40px',
             userSelect: 'none',
             display: sidebarOpen ? 'block' : 'none',
           }}
@@ -100,20 +105,19 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 style={{
                   cursor: 'pointer',
                   borderRadius: '8px',
-                  backgroundColor: active ? '#EF3349' : 'transparent',
-                  padding: '10px 20px',
+                  backgroundColor: active ? red : 'transparent',
+                  padding: '14px 24px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '15px',
+                  gap: '18px',
                   transition: 'background-color 0.3s',
-                  marginBottom: '10px',
+                  marginBottom: '16px',
                   whiteSpace: 'nowrap',
                 }}
               >
                 <span
                   style={{
-                    color: 'white',
-                    opacity: active ? 1 : 0.8,
+                    color: active ? '#fff' : red,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -125,7 +129,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 {sidebarOpen && (
                   <span
                     style={{
-                      color: 'white',
+                      color: active ? '#fff' : '#333',
                       fontWeight: active ? '600' : '500',
                       fontSize: '1rem',
                     }}
@@ -143,3 +147,5 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
 };
 
 export default Sidebar;
+
+
