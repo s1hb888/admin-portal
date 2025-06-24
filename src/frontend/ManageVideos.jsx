@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { Trash2, UploadCloud, Pencil } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Trash2, Pencil, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // 🔁 navigation
 import TopNavbar from '../components/TopNavbar';
 import Sidebar from '../components/Sidebar';
 import '../styles/ManageVideos.css';
+import { API_BASE_URL } from './config';
 
 
+import AddNewVideo from './AddNewVideo';
 const themeGreen = '#2BCB9A';
 const themeRed = '#EF3349';
 const themeYellow = '#FFCF25';
 const categories = ['Academic Learning', 'General Knowledge'];
-
-
 
 const ManageVideos = () => {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [formData, setFormData] = useState({ title: '', description: '', category: '' });
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ title: '', description: '', category: '', url: '' });
+
+  const navigate = useNavigate(); // 🧭 hook for navigating
 
   useEffect(() => {
     fetchVideos();
@@ -29,7 +30,7 @@ const ManageVideos = () => {
 
   const fetchVideos = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/videos');
+      const res = await axios.get(`${API_BASE_URL}/api/videos`);
       setVideos(res.data);
     } catch (err) {
       console.error('Failed to fetch videos', err);
@@ -39,22 +40,19 @@ const ManageVideos = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this video?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/delete-video/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/delete-video/${id}`);
       fetchVideos();
     } catch (err) {
       alert('Failed to delete video');
     }
   };
 
-  const handleRedirectToUpload = () => {
-    navigate('/admin/upload-videos');
-  };
-
   const openEditModal = (video) => {
     setFormData({
       title: video.title,
       description: video.description,
-      category: video.category
+      category: video.category,
+      url: video.url || ''
     });
     setSelectedVideo(video);
     setEditModal(true);
@@ -62,14 +60,16 @@ const ManageVideos = () => {
 
   const handleUpdate = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/videos/${selectedVideo._id}`, formData);
+      await axios.put(`${API_BASE_URL}/api/videos/${selectedVideo._id}`, formData);
       setEditModal(false);
-      setSelectedVideo(null); // Fix auto-play after edit
+      setSelectedVideo(null);
       fetchVideos();
     } catch (err) {
       alert('Failed to update video');
     }
   };
+
+  const isYouTubeLink = (url) => url?.includes('youtube.com') || url?.includes('youtu.be');
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -80,16 +80,17 @@ const ManageVideos = () => {
         style={{
           marginLeft: sidebarOpen ? '295px' : '0',
           padding: '2rem',
-          marginTop: '0px',
           minHeight: 'calc(100vh - 60px)',
           transition: 'margin-left 0.3s ease',
         }}
       >
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 style={{ color: themeGreen, textAlign: 'center', width: '100%', marginBottom: 0 }}>Video Library of Little Genius!</h3>
-          <Button 
-  onClick={handleRedirectToUpload} 
-  style={{ 
+          <h3 style={{ color: themeGreen, textAlign: 'center', width: '100%', marginBottom: 0 }}>
+            Video Library of Little Genius!
+          </h3>
+          <Button
+  onClick={() => navigate('/admin/add-video')}
+  style={{
     backgroundColor: themeGreen,
     borderColor: themeGreen,
     fontWeight: '500',
@@ -100,11 +101,14 @@ const ManageVideos = () => {
     justifyContent: 'center',
     gap: '0.5rem',
     whiteSpace: 'nowrap',
-    lineHeight: '1' // Force one-line alignment
+    lineHeight: '1',
+    color: '#fff' // For text
   }}
 >
-  <UploadCloud size={18} style={{ verticalAlign: 'middle' }} />
-  <span style={{ verticalAlign: 'middle' }}>Upload Video</span>
+  <Plus size={20} color="white" strokeWidth={2.5} />
+
+
+  <span>Add New Video</span>
 </Button>
 
         </div>
@@ -112,62 +116,80 @@ const ManageVideos = () => {
         <div className="row g-4">
           {videos.map((video) => (
             <div className="col-md-4" key={video._id}>
-             <div className="card video-card shadow-sm h-100">
-
-
-                <video
-                  width="100%"
-                  height="180"
-                  muted
-                  controls
-                  preload="metadata"
-                  style={{ cursor: 'pointer', borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}
-                  onClick={() => setSelectedVideo(video)}
-                >
-                  <source src={video.url} type="video/mp4" />
-                </video>
+              <div className="card video-card shadow-sm h-100">
+                {isYouTubeLink(video.url) ? (
+                  <iframe
+                    width="100%"
+                    height="180"
+                    src={video.url}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}
+                  ></iframe>
+                ) : (
+                  <video
+                    width="100%"
+                    height="180"
+                    muted
+                    controls
+                    preload="metadata"
+                    style={{ cursor: 'pointer', borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}
+                    onClick={() => setSelectedVideo(video)}
+                  >
+                    <source src={video.url} type="video/mp4" />
+                  </video>
+                )}
                 <div className="card-body">
-  <h5 className="card-title text-truncate">{video.title}</h5>
-  <p className="card-text small text-muted">{video.description}</p>
-                  
-  {/* Updated line with badge + buttons in one row */}
-  <div className="d-flex justify-content-between align-items-center mt-2">
-    <span className="badge" style={{ backgroundColor: themeGreen, color: 'white' }}>
-      {video.category}
-    </span>
-    <div className="d-flex gap-2">
-      <Button
-        style={{ backgroundColor: themeYellow, borderColor: themeYellow }}
-        size="sm"
-        onClick={() => openEditModal(video)}
-      >
-        <Pencil size={16} />
-      </Button>
-      <Button
-        style={{ backgroundColor: themeRed, borderColor: themeRed }}
-        size="sm"
-        onClick={() => handleDelete(video._id)}
-      >
-        <Trash2 size={16} />
-      </Button>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-
+                  <h5 className="card-title text-truncate">{video.title}</h5>
+                  <p className="card-text small text-muted">{video.description}</p>
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+                    <span className="badge" style={{ backgroundColor: themeGreen, color: 'white' }}>
+                      {video.category}
+                    </span>
+                    <div className="d-flex gap-2">
+                      <Button
+                        style={{ backgroundColor: themeYellow, borderColor: themeYellow }}
+                        size="sm"
+                        onClick={() => openEditModal(video)}
+                      >
+                        <Pencil size={16} />
+                      </Button>
+                      <Button
+                        style={{ backgroundColor: themeRed, borderColor: themeRed }}
+                        size="sm"
+                        onClick={() => handleDelete(video._id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Video Preview Modal */}
+        {/* Preview Modal */}
         <Modal show={!!selectedVideo && !editModal} onHide={() => setSelectedVideo(null)} centered size="lg">
           <Modal.Header closeButton>
             <Modal.Title>{selectedVideo?.title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {selectedVideo && (
+            {selectedVideo && isYouTubeLink(selectedVideo.url) ? (
+              <iframe
+                width="100%"
+                height="400"
+                src={selectedVideo?.url}
+                title={selectedVideo.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            ) : (
               <video width="100%" height="auto" controls>
-                <source src={selectedVideo.url} type="video/mp4" />
+                <source src={selectedVideo?.url} type="video/mp4" />
               </video>
             )}
           </Modal.Body>
@@ -196,14 +218,21 @@ const ManageVideos = () => {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Category</Form.Label>
-  <Form.Select
-    value={formData.category}
-    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-  >
-    {categories.map((cat, index) => (
-      <option key={index} value={cat}>{cat}</option>
-    ))}
-  </Form.Select>
+                <Form.Select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
+                  {categories.map((cat, index) => (
+                    <option key={index} value={cat}>{cat}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>Video URL (optional if uploading file)</Form.Label>
+                <Form.Control
+                  value={formData.url}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                />
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -220,7 +249,5 @@ const ManageVideos = () => {
     </div>
   );
 };
-
-
 
 export default ManageVideos;

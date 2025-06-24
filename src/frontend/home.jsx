@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     },
     {
       title: 'Video Library',
-      desc: 'Upload, review, or delete educational videos.',
+      desc: 'Add, update, or delete educational videos.',
       icon: <FaVideo size={28} color={red} />,
       path: '/admin/manage-videos',
     },
