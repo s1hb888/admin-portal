@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { API_BASE_URL } from './config';
 
 
 function Signup() {
@@ -11,20 +12,26 @@ function Signup() {
   const [error, setError] = useState("");
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:5000/api/users/signup", {
-  username,
+  e.preventDefault();
+
+  try {
+    const res = await axios.post(`${API_BASE_URL}/api/admins/signup`, {
+  username,   
   email,
   password,
 });
-      localStorage.setItem("adminToken", res.data.token);
-      navigate("/");
-    } catch (err) {
-  setError(err.response?.data?.message || "Signup failed. Try again.");
-}
 
-  };
+    // Save token in local storage
+    localStorage.setItem("adminToken", res.data.token);
+
+    // Redirect after signup
+    navigate("/");
+  } catch (err) {
+    setError(err.response?.data?.message || "Signup failed. Try again.");
+  }
+};
+
+  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -58,5 +65,6 @@ function Signup() {
     </div>
   );
 }
+
 
 export default Signup;

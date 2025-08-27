@@ -1,13 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const red = '#EF3349';
 const themeGreen = '#2BCB9A'; 
 const lightGreen = '#e1f8f2'; 
+const API_BASE_URL = "http://localhost:5000"; // 👈 apni backend base URL daalna
 
-const TopNavbar = ({ sidebarOpen, toggleSidebar }) => {
+const TopNavbar = ({ sidebarOpen }) => {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState({ username: "", profileImage: "" });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) return;
+        const res = await axios.get(`${API_BASE_URL}/api/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProfile(res.data);
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   return (
     <nav
@@ -55,9 +74,9 @@ const TopNavbar = ({ sidebarOpen, toggleSidebar }) => {
         />
       </div>
 
-      {/* Notifications and Profile Icons */}
+      {/* Notifications and Profile */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        {/* Notifications Icon with light green background */}
+        {/* Notifications */}
         <div
           style={{
             width: '40px',
@@ -94,9 +113,12 @@ const TopNavbar = ({ sidebarOpen, toggleSidebar }) => {
           <Bell size={24} color={themeGreen} /> 
         </div>
 
-        {/* User Profile Section with a border around the image */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Andrew's profile picture container with a border */}
+        {/* Profile Section */}
+        <div 
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          onClick={() => navigate("/profile")} // 👈 Profile.jsx page
+        >
+          {/* Profile Picture */}
           <div
             style={{
               width: '40px',
@@ -107,14 +129,19 @@ const TopNavbar = ({ sidebarOpen, toggleSidebar }) => {
               alignItems: 'center',
               justifyContent: 'center',
               overflow: 'hidden',
-              border: '1px solid #ddd', // Added a light gray border
+              border: '1px solid #ddd',
             }}
           >
-            {/* Andrew Starlin's picture */}
-            <img src="https://via.placeholder.com/40" alt="Andrew Starlin" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img 
+              src={profile.profileImage ? `${API_BASE_URL}${profile.profileImage}` : "https://via.placeholder.com/40"}
+              alt={profile.username || "Profile"}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </div>
           <div>
-            <div style={{ fontWeight: '600', fontSize: '1rem' }}>Andrew Starlin</div>
+            <div style={{ fontWeight: '600', fontSize: '1rem' }}>
+              {profile.username || "Loading..."}
+            </div>
             <div style={{ fontSize: '0.8rem', color: '#888' }}>Admin</div>
           </div>
         </div>

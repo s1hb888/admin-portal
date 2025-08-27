@@ -11,6 +11,7 @@ const vowelRoutes = require("./routes/vowelRoutes");
 const fruitRoutes = require("./routes/fruitRoutes");
 const vegetableRoutes = require("./routes/vegetableRoutes");
 const bodypartRoutes = require("./routes/bodypartRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 const app = express();
 app.use(cors());
@@ -23,13 +24,17 @@ app.use("/api/vowels", vowelRoutes);
 app.use("/api/fruits", fruitRoutes);
 app.use("/api/vegetables", vegetableRoutes);
 app.use("/api/bodyparts", bodypartRoutes);
+app.use("/uploads", express.static("uploads"));
 
 mongoose.connect("mongodb://127.0.0.1:27017/PrepPalDB")
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error(err));
 
+  // Routes
+
+app.use("/api/profile", profileRoutes);
 // Routes
-app.use("/api/users", accountRoutes);
+app.use("/api/admins", accountRoutes);
 app.use("/api/upload-video", uploadRouter);
 app.use("/api/videos", fetchRouter);
 app.use("/api/delete-video", deleteRouter);

@@ -12,10 +12,11 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
-        email,
-        password,
-      });
+      const res = await axios.post("http://localhost:5000/api/admins/login", {
+  email,
+  password,
+});
+
       localStorage.setItem("adminToken", res.data.token);
       navigate("/");
     } catch (err) {

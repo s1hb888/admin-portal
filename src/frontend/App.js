@@ -18,6 +18,7 @@ import VowelsCRUD from './VowelsCRUD';
 import FruitsCRUD from './FruitsCRUD';
 import VegetablesCRUD from './VegetablesCRUD';
 import BodypartsCRUD from './BodypartsCRUD';
+import Profile from './Profile';
 
 // In src/index.js
 import '../index.css';
@@ -29,7 +30,7 @@ function App() {
         <Route path="/" element={<CRM />} />
           <Route path="/admin/login" element={<Login />} />
        <Route path="/admin/signup" element={<Signup />} />
-
+ <Route path="/profile" element={<Profile />} />
         <Route path="/admin/add-video" element={<AddNewVideo />} />
         <Route path="/admin/manage-courses" element={<ManageCourses />} />
         <Route path="/admin/manage-quizzes" element={<ManageQuizzes />} />
