@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AdminDashboardHome from './home';
 import Login from './Login';
+import CRM from './CRM';
 import AddNewVideo from './AddNewVideo';
 import ManageCourses from './ManageCourses';
 import ManageQuizzes from './ManageQuizzes';
@@ -16,13 +16,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AdminDashboardHome />} />
+        <Route path="/" element={<CRM />} />
             <Route path="/admin/login" element={<Login />} />
             <Route path="/admin/add-video" element={<AddNewVideo />} />
              <Route path="/admin/manage-courses" element={<ManageCourses />} />
              <Route path="/admin/manage-quizzes" element={<ManageQuizzes />} />
              <Route path="/admin/manage-accounts" element={<ManageAccounts />} />
              <Route path="/admin/manage-videos" element={<ManageVideos />} />
+             <Route path="/admin/crm" element={<CRM />} />
       </Routes>
     </Router>
   );
