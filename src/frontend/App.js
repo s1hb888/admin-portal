@@ -8,6 +8,15 @@ import ManageCourses from './ManageCourses';
 import ManageQuizzes from './ManageQuizzes';
 import ManageAccounts from './ManageAccounts';
 import ManageVideos from './ManageVideos';
+import ManageGK from './ManageGK';
+import ManageAcademics from './ManageAcademics';
+import AlphabetCRUD from './AlphabetCRUD';
+import UrduCRUD from './UrduCRUD';
+import MathsCRUD from './MathsCRUD';
+import VowelsCRUD from './VowelsCRUD';
+import FruitsCRUD from './FruitsCRUD';
+import VegetablesCRUD from './VegetablesCRUD';
+import BodypartsCRUD from './BodypartsCRUD';
 
 // In src/index.js
 import '../index.css';
@@ -23,6 +32,15 @@ function App() {
              <Route path="/admin/manage-quizzes" element={<ManageQuizzes />} />
              <Route path="/admin/manage-accounts" element={<ManageAccounts />} />
              <Route path="/admin/manage-videos" element={<ManageVideos />} />
+            <Route path="/admin/manage-academics" element={<ManageAcademics />} />
+            <Route path="/admin/manage-gk" element={<ManageGK />} />
+             <Route path="/admin/alphabet-crud" element={<AlphabetCRUD />} />
+              <Route path="/admin/urdu-crud" element={<UrduCRUD />} />
+               <Route path="/admin/maths-crud" element={<MathsCRUD />} />
+                <Route path="/admin/vowels-crud" element={<VowelsCRUD />} />
+                 <Route path="/admin/fruits-crud" element={<FruitsCRUD />} />
+                  <Route path="/admin/vegetables-crud" element={<VegetablesCRUD />} />
+                   <Route path="/admin/Bodyparts-crud" element={<BodypartsCRUD />} />
       </Routes>
     </Router>
   );

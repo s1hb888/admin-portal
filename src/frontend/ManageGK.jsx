@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaBookOpen, FaGlobe } from 'react-icons/fa';
+import { FaAppleAlt, FaCarrot, FaBookOpen, FaChild, FaFont } from 'react-icons/fa';
 
-const ManageCourses = () => {
+const ManageGK = () => {
   const navigate = useNavigate();
 
   const red = '#EF3349';
@@ -10,27 +10,45 @@ const ManageCourses = () => {
   const cardBackground = '#e1f8f2';
   const textDark = '#222';
 
- const cards = [
-  {
-    title: 'Academic Learning',
-    desc: 'Access and manage academic subjects and study material.',
-    icon: <FaBookOpen size={28} color={red} />,
-    path: '/admin/manage-academics',   // 👈 ManageAcademics page
-  },
-  {
-    title: 'General Knowledge',
-    desc: 'Explore the content to enhance general knowledge.',
-    icon: <FaGlobe size={28} color={red} />,
-    path: '/admin/manage-gk',   // 👈 ManageGK page
-  },
-];
+  const cards = [
+    {
+      title: 'Vowels',
+      desc: 'Manage vowels (A, E, I, O, U).',
+      icon: <FaFont size={28} color={red} />,
+      path: '/admin/vowels-crud',
+    },
+    {
+      title: 'Fruits',
+      desc: 'Manage common fruits.',
+      icon: <FaAppleAlt size={28} color={red} />,
+      path: '/admin/fruits-crud',
+    },
+    {
+      title: 'Vegetables',
+      desc: 'Manage common vegetables.',
+      icon: <FaCarrot size={28} color={red} />,
+      path: '/admin/vegetables-crud',
+    },
+    {
+      title: 'Body Parts',
+      desc: 'Manage human body parts.',
+      icon: <FaChild size={28} color={red} />,
+      path: '/admin/bodyparts-crud',
+    },
+    {
+      title: 'Islamic Studies',
+      desc: 'Manage Islamic knowledge and values.',
+      icon: <FaBookOpen size={28} color={red} />,
+      path: '/admin/islamic-studies-crud',
+    },
+  ];
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Main Content */}
       <main
         style={{
-          padding: '5rem',
+          padding: '2rem',
           minHeight: '100vh',
           backgroundColor: '#fff',
           transition: 'margin-left 0.3s ease',
@@ -39,8 +57,11 @@ const ManageCourses = () => {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{ color: green, fontWeight: '700', fontSize: '2.2rem' }}>
-            Courses Management
+          Manage  General Knowledge Content
           </h2>
+          <p style={{ color: '#555', fontSize: '1rem', marginTop: '10px' }}>
+            Manage learning categories like vowels, fruits, vegetables, and more.
+          </p>
         </div>
 
         {/* Cards */}
@@ -51,7 +72,7 @@ const ManageCourses = () => {
           {cards.map(({ title, desc, icon, path }, i) => (
             <div
               key={i}
-              className="col-md-2 mb-4"
+              className="col-md-4 mb-4"
               style={{ padding: '0 15px', maxWidth: '350px' }}
             >
               <div
@@ -62,7 +83,7 @@ const ManageCourses = () => {
                   cursor: 'pointer',
                   backgroundColor: cardBackground,
                   transition: 'all 0.3s ease',
-                  minHeight: '400px',
+                  minHeight: '230px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
@@ -71,7 +92,7 @@ const ManageCourses = () => {
               >
                 <div
                   className="card-body text-center"
-                  style={{ padding: '5rem 3rem' }}
+                  style={{ padding: '2rem 1rem' }}
                 >
                   <div
                     style={{
@@ -129,4 +150,4 @@ const ManageCourses = () => {
   );
 };
 
-export default ManageCourses;
+export default ManageGK;
