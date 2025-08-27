@@ -71,46 +71,41 @@ const ManageVideos = () => {
 
   const isYouTubeLink = (url) => url?.includes('youtube.com') || url?.includes('youtu.be');
 
-  return (
+return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <TopNavbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
       <main
+        className="main-content-wrapper" /* Use the new CSS class here */
         style={{
-          marginLeft: sidebarOpen ? '295px' : '0',
-          padding: '2rem',
-          minHeight: 'calc(100vh - 60px)',
-          transition: 'margin-left 0.3s ease',
+          marginLeft: sidebarOpen ? '295px' : '0' // Keep this dynamic style
         }}
       >
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 style={{ color: themeGreen, textAlign: 'center', width: '100%', marginBottom: 0 }}>
+        <div className="heading-bar"> {/* Use the heading-bar class here */}
+          <h3 className="page-heading">
             Video Library of Little Genius!
           </h3>
           <Button
-  onClick={() => navigate('/admin/add-video')}
-  style={{
-    backgroundColor: themeGreen,
-    borderColor: themeGreen,
-    fontWeight: '500',
-    padding: '0.5rem 1.5rem',
-    minWidth: '180px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    whiteSpace: 'nowrap',
-    lineHeight: '1',
-    color: '#fff' // For text
-  }}
->
-  <Plus size={20} color="white" strokeWidth={2.5} />
-
-
-  <span>Add New Video</span>
-</Button>
-
+            onClick={() => navigate('/admin/add-video')}
+            style={{
+              backgroundColor: themeGreen,
+              borderColor: themeGreen,
+              fontWeight: '500',
+              padding: '0.5rem 1.5rem',
+              minWidth: '180px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              whiteSpace: 'nowrap',
+              lineHeight: '1',
+              color: '#fff'
+            }}
+          >
+            <Plus size={20} color="white" strokeWidth={2.5} />
+            <span>Add New Video</span>
+          </Button>
         </div>
 
         <div className="row g-4">

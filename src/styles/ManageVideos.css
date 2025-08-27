@@ -1,22 +1,37 @@
+.main-content-wrapper {
+  margin-top: 60px; /* Pushes content down below the fixed TopNavbar */
+  padding: 2rem;
+  min-height: calc(100vh - 60px); /* Fills the rest of the viewport */
+  transition: margin-left 0.3s ease;
+  background-color: #f3f4f6; /* A clean background color for the page */
+}
+
 .heading-bar {
-  margin: 0 !important;
-  padding: 0.5rem 0;
+  /* This class is likely a container for your heading, so we'll style it to be a flexbox */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .page-heading {
   color: #2BCB9A;
   font-weight: 600;
-  margin-bottom: 0;
-  text-align: center;
+  margin-bottom: 0; /* Ensures no extra space below the heading */
   font-size: 1.8rem;
+  /* `margin-top: 50;` is incorrect without a unit (e.g., px, rem) and is not needed here */
 }
 
+/* Existing styles for video cards remain the same */
 .video-card {
-  background-color: #e6f8f3; /* Light green */
+  background-color: #e6f8f3;
   border: 2px solid #2BCB9A;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-card:hover {

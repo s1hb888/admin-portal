@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AdminDashboardHome from './home';
 import Login from './Login';
+import CRM from './CRM';
 import AddNewVideo from './AddNewVideo';
 import ManageCourses from './ManageCourses';
 import ManageQuizzes from './ManageQuizzes';
@@ -25,22 +25,23 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AdminDashboardHome />} />
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/add-video" element={<AddNewVideo />} />
-             <Route path="/admin/manage-courses" element={<ManageCourses />} />
-             <Route path="/admin/manage-quizzes" element={<ManageQuizzes />} />
-             <Route path="/admin/manage-accounts" element={<ManageAccounts />} />
-             <Route path="/admin/manage-videos" element={<ManageVideos />} />
-            <Route path="/admin/manage-academics" element={<ManageAcademics />} />
-            <Route path="/admin/manage-gk" element={<ManageGK />} />
-             <Route path="/admin/alphabet-crud" element={<AlphabetCRUD />} />
-              <Route path="/admin/urdu-crud" element={<UrduCRUD />} />
-               <Route path="/admin/maths-crud" element={<MathsCRUD />} />
-                <Route path="/admin/vowels-crud" element={<VowelsCRUD />} />
-                 <Route path="/admin/fruits-crud" element={<FruitsCRUD />} />
-                  <Route path="/admin/vegetables-crud" element={<VegetablesCRUD />} />
-                   <Route path="/admin/Bodyparts-crud" element={<BodypartsCRUD />} />
+        <Route path="/" element={<CRM />} />
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/add-video" element={<AddNewVideo />} />
+        <Route path="/admin/manage-courses" element={<ManageCourses />} />
+        <Route path="/admin/manage-quizzes" element={<ManageQuizzes />} />
+        <Route path="/admin/manage-accounts" element={<ManageAccounts />} />
+        <Route path="/admin/manage-videos" element={<ManageVideos />} />
+        <Route path="/admin/manage-academics" element={<ManageAcademics />} />
+        <Route path="/admin/manage-gk" element={<ManageGK />} />
+        <Route path="/admin/alphabet-crud" element={<AlphabetCRUD />} />
+        <Route path="/admin/urdu-crud" element={<UrduCRUD />} />
+        <Route path="/admin/maths-crud" element={<MathsCRUD />} />
+        <Route path="/admin/vowels-crud" element={<VowelsCRUD />} />
+        <Route path="/admin/fruits-crud" element={<FruitsCRUD />} />
+        <Route path="/admin/vegetables-crud" element={<VegetablesCRUD />} />
+        <Route path="/admin/bodyparts-crud" element={<BodypartsCRUD />} />
+        <Route path="/admin/crm" element={<CRM />} />
       </Routes>
     </Router>
   );
