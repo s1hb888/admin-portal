@@ -21,7 +21,7 @@ const Sidebar = () => {
   const darkGray = '#555';
 
   const navItems = [
-    { label: 'Dashboard', icon: <LayoutDashboard size={24} />, path: '/admin/dashboard' },
+    { label: 'Dashboard', icon: <LayoutDashboard size={24} />, path: '/admin/crm' },
     { label: 'Courses', icon: <BookOpen size={24} />, path: '/admin/manage-courses' },
     { label: 'Quizzes', icon: <Mic size={24} />, path: '/admin/manage-quizzes' },
     { label: 'Videos', icon: <Video size={24} />, path: '/admin/manage-videos' },
