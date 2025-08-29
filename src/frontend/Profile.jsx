@@ -15,11 +15,9 @@ function Profile() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("adminToken");
-    
       const res = await axios.get(`${API_BASE_URL}/api/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data);
       setProfile(res.data);
       setUsername(res.data.username || "");
       setPreviewImage(
@@ -40,8 +38,9 @@ function Profile() {
       );
       alert("Profile updated");
       fetchProfile();
-      setPassword(""); // reset after update
+      setPassword("");
     } catch (err) {
+      console.error("Update failed:", err);
       alert("Update failed");
     }
   };
@@ -64,57 +63,61 @@ function Profile() {
         },
       });
 
-      alert("Image uploaded");
       setProfile((prev) => ({ ...prev, profileImage: res.data.imageUrl }));
       setPreviewImage(`${API_BASE_URL}${res.data.imageUrl}`);
+      alert("Image uploaded");
     } catch (err) {
+      console.error("Image upload failed:", err);
       alert("Image upload failed");
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("Delete your account?")) {
+  const handleDeleteImage = async () => {
+    if (!window.confirm("Are you sure you want to delete your profile image?")) return;
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      await axios.delete(`${API_BASE_URL}/api/profile/photo`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setPreviewImage(null);
+      setProfile((prev) => ({ ...prev, profileImage: null }));
+      alert("Profile image deleted successfully");
+    } catch (err) {
+      console.error("Delete image failed:", err);
+      alert("Failed to delete profile image");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to delete your account? This cannot be undone.")) {
       try {
         const token = localStorage.getItem("adminToken");
         await axios.delete(`${API_BASE_URL}/api/profile/delete`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         localStorage.removeItem("adminToken");
+        alert("Account deleted successfully");
         window.location.href = "/signup";
       } catch (err) {
-        alert("Delete failed");
+        console.error("Delete failed:", err);
+        alert("Failed to delete account");
       }
     }
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}
-    >
-      <div
-        className="card p-4 shadow-lg"
-        style={{
-          maxWidth: "450px",
-          width: "100%",
-          borderRadius: "20px",
-          backgroundColor: "#fff",
-          border: "3px solid #2BCB9A",
-        }}
-      >
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
+      <div className="card p-4 shadow-lg" style={{ maxWidth: "450px", width: "100%", borderRadius: "20px", backgroundColor: "#fff", border: "3px solid #2BCB9A" }}>
         <div className="text-center mb-4">
           {previewImage ? (
             <img
               src={previewImage}
               alt="profile"
               className="mb-2"
-              style={{
-                width: "120px",
-                height: "120px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "4px solid #FFCF25",
-              }}
+              style={{ width: "120px", height: "120px", borderRadius: "50%", objectFit: "cover", border: "4px solid #FFCF25" }}
             />
           ) : (
             <div
@@ -136,7 +139,14 @@ function Profile() {
               {profile.username ? profile.username[0].toUpperCase() : "?"}
             </div>
           )}
-          <input type="file" onChange={handleImageUpload} className="form-control mt-2" />
+
+          <input type="file" onChange={handleImageUpload} className="form-control mt-2 mb-2" />
+
+          {previewImage && (
+            <button className="btn btn-danger btn-sm" onClick={handleDeleteImage}>
+              Delete Image
+            </button>
+          )}
         </div>
 
         <h4 className="text-center mb-4" style={{ color: "#2BCB9A" }}>
@@ -150,36 +160,19 @@ function Profile() {
 
         <div className="mb-3">
           <label>Username</label>
-          <input
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <input className="form-control" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
 
         <div className="mb-3">
           <label>New Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
         <div className="d-flex justify-content-between">
-          <button
-            className="btn"
-            style={{ backgroundColor: "#2BCB9A", color: "#fff" }}
-            onClick={handleUpdate}
-          >
+          <button className="btn" style={{ backgroundColor: "#2BCB9A", color: "#fff" }} onClick={handleUpdate}>
             Save Changes
           </button>
-          <button
-            className="btn"
-            style={{ backgroundColor: "#EF3349", color: "#fff" }}
-            onClick={handleDelete}
-          >
+          <button className="btn" style={{ backgroundColor: "#EF3349", color: "#fff" }} onClick={handleDeleteAccount}>
             Delete Account
           </button>
         </div>

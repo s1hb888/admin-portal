@@ -33,6 +33,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/PrepPalDB")
   // Routes
 
 app.use("/api/profile", profileRoutes);
+
 // Routes
 app.use("/api/admins", accountRoutes);
 app.use("/api/upload-video", uploadRouter);
