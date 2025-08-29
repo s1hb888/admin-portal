@@ -41,6 +41,7 @@ app.use("/api/delete-video", deleteRouter);
 
 app.use("/uploads/videos", express.static(path.join(__dirname, "uploads/videos")));
 
+
 app.listen(5000, () => {
   console.log("🚀 Server is running on http://localhost:5000");
 });

@@ -2,50 +2,63 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const Admin = require("../models/Admin");
+const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Admin = require("../models/Admin");
 
-// Middleware for auth
+// ⚠️ Use the same secret as in your login routes
+const JWT_SECRET = "your_secret_key"; // Replace with process.env.JWT_SECRET in production
+
+// Middleware for authentication (JWT)
 const protect = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "No token provided" });
+  let token;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await Admin.findById(decoded.id).select("-password");
-    if (!req.user) return res.status(404).json({ message: "User not found" });
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, JWT_SECRET);
 
-    next();
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+      req.admin = await Admin.findById(decoded.id).select("-password");
+
+      if (!req.admin) return res.status(404).json({ message: "Admin not found" });
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: "Token failed", error: error.message });
+    }
+  } else {
+    return res.status(401).json({ message: "No token, authorization denied" });
   }
 };
 
-// Multer setup for uploads folder
+// Multer setup for profile image upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      req.user._id + "-" + Date.now() + path.extname(file.originalname)
-    );
+    cb(null, req.admin._id + "-" + Date.now() + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage });
 
-// GET profile
+// ✅ Get logged-in admin profile
 router.get("/", protect, async (req, res) => {
-  res.json(req.user);
+  try {
+    res.json(req.admin);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch profile", error: err.message });
+  }
 });
 
-// UPDATE profile (username/password)
+// ✅ Update admin profile (username/password)
 router.put("/update", protect, async (req, res) => {
   try {
     const { username, password } = req.body;
-    const admin = await Admin.findById(req.user._id);
+    const admin = await Admin.findById(req.admin._id);
 
     if (username) admin.username = username;
     if (password) {
@@ -60,22 +73,30 @@ router.put("/update", protect, async (req, res) => {
   }
 });
 
-// UPLOAD profile picture
+// ✅ Upload/change profile picture
 router.put("/photo", protect, upload.single("profileImage"), async (req, res) => {
   try {
-    const admin = await Admin.findById(req.user._id);
+    const admin = await Admin.findById(req.admin._id);
+
+    // Delete old image if exists
+    if (admin.profileImage) {
+      const oldPath = path.join(__dirname, "..", admin.profileImage);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    }
+
     admin.profileImage = `/uploads/${req.file.filename}`;
     await admin.save();
+
     res.json({ success: true, imageUrl: admin.profileImage });
   } catch (err) {
     res.status(500).json({ message: "Image upload failed", error: err.message });
   }
 });
 
-// DELETE account
+// ✅ Delete admin account
 router.delete("/delete", protect, async (req, res) => {
   try {
-    await Admin.findByIdAndDelete(req.user._id);
+    await Admin.findByIdAndDelete(req.admin._id);
     res.json({ message: "Account deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Delete failed", error: err.message });

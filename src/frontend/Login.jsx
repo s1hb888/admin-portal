@@ -18,6 +18,7 @@ function Login() {
 });
 
       localStorage.setItem("adminToken", res.data.token);
+      
       navigate("/");
     } catch (err) {
       setError("Invalid credentials");

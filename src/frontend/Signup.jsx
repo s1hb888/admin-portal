@@ -25,7 +25,7 @@ function Signup() {
     localStorage.setItem("adminToken", res.data.token);
 
     // Redirect after signup
-    navigate("/");
+    navigate("/admin/login");
   } catch (err) {
     setError(err.response?.data?.message || "Signup failed. Try again.");
   }

@@ -1,3 +1,4 @@
+// Sidebar.jsx
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -29,9 +30,14 @@ const Sidebar = () => {
     { label: 'Settings', icon: <Settings size={24} />, path: '/admin/settings' },
   ];
 
+  // ✅ Logout function with confirmation
   const handleLogout = () => {
-    console.log('Logout clicked');
-    navigate('/admin/login');
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (confirmed) {
+      localStorage.removeItem('adminToken'); // remove token
+      localStorage.removeItem('adminProfile'); // remove profile info
+      navigate('/admin/login'); // redirect to login
+    }
   };
 
   return (
@@ -46,13 +52,12 @@ const Sidebar = () => {
         left: 0,
         overflowY: 'auto',
         overflowX: 'hidden',
-        // boxShadow: '2px 0 8px rgba(0,0,0,0.15)', // Removed this line
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
       }}
     >
-      {/* Branding (unchanged) */}
+      {/* Branding */}
       <div
         style={{
           display: 'flex',
@@ -75,14 +80,13 @@ const Sidebar = () => {
             color: '#fff',
             fontWeight: '700',
             fontSize: '1.4rem',
-            flexShrink: 0,
           }}
         >
           P
         </div>
         <div>
-          <h3 style={{ margin: 0, fontWeight: '700', fontSize: '1.5rem', color: '#222', whiteSpace: 'nowrap' }}>PrepPal</h3>
-          <p style={{ margin: 0, fontSize: '1rem', color: '#666', whiteSpace: 'nowrap' }}>Learning Management</p>
+          <h3 style={{ margin: 0, fontWeight: '700', fontSize: '1.5rem', color: '#222' }}>PrepPal</h3>
+          <p style={{ margin: 0, fontSize: '1rem', color: '#666' }}>Learning Management</p>
         </div>
       </div>
 
@@ -105,7 +109,6 @@ const Sidebar = () => {
                   gap: '22px',
                   marginBottom: '16px',
                   transition: 'all 0.3s',
-                  position: 'relative',
                   color: active ? darkGray : '#333',
                   fontWeight: active ? '600' : '500',
                   fontSize: '1.05rem',

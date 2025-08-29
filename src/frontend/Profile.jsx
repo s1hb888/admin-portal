@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-import { API_BASE_URL } from './config';
+import { API_BASE_URL } from "./config";
 
 function Profile() {
   const [profile, setProfile] = useState({});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     fetchProfile();
@@ -16,13 +15,18 @@ function Profile() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("adminToken");
+    
       const res = await axios.get(`${API_BASE_URL}/api/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(res.data);
       setProfile(res.data);
-      setUsername(res.data.username);
+      setUsername(res.data.username || "");
+      setPreviewImage(
+        res.data.profileImage ? `${API_BASE_URL}${res.data.profileImage}` : null
+      );
     } catch (err) {
-      console.error(err);
+      console.error("Profile fetch error:", err);
     }
   };
 
@@ -36,6 +40,7 @@ function Profile() {
       );
       alert("Profile updated");
       fetchProfile();
+      setPassword(""); // reset after update
     } catch (err) {
       alert("Update failed");
     }
@@ -44,6 +49,9 @@ function Profile() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    setPreviewImage(URL.createObjectURL(file));
+
     const formData = new FormData();
     formData.append("profileImage", file);
 
@@ -55,8 +63,10 @@ function Profile() {
           Authorization: `Bearer ${token}`,
         },
       });
+
       alert("Image uploaded");
       setProfile((prev) => ({ ...prev, profileImage: res.data.imageUrl }));
+      setPreviewImage(`${API_BASE_URL}${res.data.imageUrl}`);
     } catch (err) {
       alert("Image upload failed");
     }
@@ -78,54 +88,102 @@ function Profile() {
   };
 
   return (
-    <div className="container mt-4">
-      <h3>Profile Management</h3>
-
-      <div className="mb-3">
-        <label>Profile Picture</label>
-        <div>
-          {profile.profileImage && (
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}
+    >
+      <div
+        className="card p-4 shadow-lg"
+        style={{
+          maxWidth: "450px",
+          width: "100%",
+          borderRadius: "20px",
+          backgroundColor: "#fff",
+          border: "3px solid #2BCB9A",
+        }}
+      >
+        <div className="text-center mb-4">
+          {previewImage ? (
             <img
-              src={`${API_BASE_URL}${profile.profileImage}`}
+              src={previewImage}
               alt="profile"
-              width="100"
-              style={{ borderRadius: "50%" }}
+              className="mb-2"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "4px solid #FFCF25",
+              }}
             />
+          ) : (
+            <div
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                backgroundColor: "#e1f8f2",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "40px",
+                fontWeight: "bold",
+                color: "#2BCB9A",
+                margin: "0 auto 10px",
+                border: "4px solid #FFCF25",
+              }}
+            >
+              {profile.username ? profile.username[0].toUpperCase() : "?"}
+            </div>
           )}
+          <input type="file" onChange={handleImageUpload} className="form-control mt-2" />
         </div>
-        <input type="file" onChange={handleImageUpload} />
-      </div>
 
-      <div className="mb-3">
-        <label>Email</label>
-        <input className="form-control" value={profile.email || ""} disabled />
-      </div>
+        <h4 className="text-center mb-4" style={{ color: "#2BCB9A" }}>
+          Profile Management
+        </h4>
 
-      <div className="mb-3">
-        <label>Username</label>
-        <input
-          className="form-control"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
+        <div className="mb-3">
+          <label>Email</label>
+          <input className="form-control" value={profile.email || ""} disabled />
+        </div>
 
-      <div className="mb-3">
-        <label>New Password</label>
-        <input
-          type="password"
-          className="form-control"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+        <div className="mb-3">
+          <label>Username</label>
+          <input
+            className="form-control"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
 
-      <button className="btn btn-success me-2" onClick={handleUpdate}>
-        Save Changes
-      </button>
-      <button className="btn btn-danger" onClick={handleDelete}>
-        Delete Account
-      </button>
+        <div className="mb-3">
+          <label>New Password</label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
+        <div className="d-flex justify-content-between">
+          <button
+            className="btn"
+            style={{ backgroundColor: "#2BCB9A", color: "#fff" }}
+            onClick={handleUpdate}
+          >
+            Save Changes
+          </button>
+          <button
+            className="btn"
+            style={{ backgroundColor: "#EF3349", color: "#fff" }}
+            onClick={handleDelete}
+          >
+            Delete Account
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
