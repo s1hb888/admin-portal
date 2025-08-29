@@ -49,19 +49,27 @@ router.put("/update", protect, async (req, res) => {
     const { username, password } = req.body;
     const admin = await Admin.findById(req.admin._id);
 
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
+
     if (username) admin.username = username;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      admin.password = await bcrypt.hash(password, salt);
-    }
+    if (password) admin.password = password; // Let pre-save middleware handle hashing
 
     await admin.save();
-    res.json({ message: "Profile updated successfully" });
+
+    // Optionally, return new JWT token so frontend doesn’t break
+    const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: "1d" });
+
+    res.json({
+      message: "Profile updated successfully",
+      token,
+      username: admin.username,
+    });
   } catch (err) {
     console.error("Update failed:", err);
     res.status(500).json({ message: "Update failed", error: err.message });
   }
 });
+
 
 // Upload/change profile image
 router.put("/photo", protect, upload.single("profileImage"), async (req, res) => {

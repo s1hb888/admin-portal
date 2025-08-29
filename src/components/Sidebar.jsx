@@ -1,5 +1,4 @@
-// Sidebar.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -10,16 +9,61 @@ import {
   Settings,
   LogOut as LogOutIcon,
 } from 'lucide-react';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:5000';
+const red = '#EF3349';
+const lightGreen = '#e1f8f2';
+const yellow = '#FFCF25';
+const lightGray = '#f8f9fa';
+const darkGray = '#555';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const red = '#EF3349';
-  const lightGreen = '#e1f8f2';
-  const yellow = '#FFCF25';
-  const lightGray = '#f8f9fa';
-  const darkGray = '#555';
+  const [profile, setProfile] = useState({ username: 'Admin', profileImage: null });
+
+  // Fetch profile from localStorage or backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('adminToken');
+      if (!token) return;
+
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userProfile = res.data;
+        setProfile({
+          username: userProfile.username || 'Admin',
+          profileImage: userProfile.profileImage || null,
+        });
+        localStorage.setItem('adminProfile', JSON.stringify(userProfile));
+      } catch (err) {
+        console.error('Failed to fetch profile:', err.response?.data || err.message);
+      }
+    };
+
+    const saved = localStorage.getItem('adminProfile');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setProfile({
+          username: parsed.username || 'Admin',
+          profileImage: parsed.profileImage || null,
+        });
+      } catch {}
+    }
+
+    fetchProfile();
+  }, []);
+
+  const imgSrc = profile.profileImage
+    ? profile.profileImage.startsWith('http')
+      ? profile.profileImage
+      : `${API_BASE_URL}${profile.profileImage}`
+    : 'https://via.placeholder.com/50';
 
   const navItems = [
     { label: 'Dashboard', icon: <LayoutDashboard size={24} />, path: '/admin/crm' },
@@ -30,13 +74,12 @@ const Sidebar = () => {
     { label: 'Settings', icon: <Settings size={24} />, path: '/admin/settings' },
   ];
 
-  // ✅ Logout function with confirmation
   const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
+    const confirmed = window.confirm('Are you sure you want to logout?');
     if (confirmed) {
-      localStorage.removeItem('adminToken'); // remove token
-      localStorage.removeItem('adminProfile'); // remove profile info
-      navigate('/admin/login'); // redirect to login
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminProfile');
+      navigate('/admin/login');
     }
   };
 
@@ -135,25 +178,24 @@ const Sidebar = () => {
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/profile')}>
           <div
             style={{
               width: '50px',
               height: '50px',
               borderRadius: '50%',
-              backgroundColor: yellow,
-              color: '#fff',
-              fontWeight: 'bold',
-              fontSize: '1.3rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              overflow: 'hidden',
+              border: '1px solid #ddd',
             }}
           >
-            AS
+            <img
+              src={imgSrc}
+              alt={profile.username || 'Admin'}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </div>
           <div>
-            <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>Admin Sarah</div>
+            <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{profile.username || 'Admin'}</div>
             <div style={{ fontSize: '0.85rem', color: '#888' }}>Online</div>
           </div>
         </div>
