@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
-import { Smile, Users, Star } from 'lucide-react';
+import { Users, Star } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import TopNavbar from '../components/TopNavbar';
-import RecentActivities from '../components/RecentActivities';
-import { GiBabyFace } from 'react-icons/gi'; 
+import Feedback from '../components/Feedback';
+import { GiBabyFace } from 'react-icons/gi';
+import axios from 'axios';
 
 import {
   ResponsiveContainer,
@@ -22,39 +23,113 @@ import {
 
 const themeGreen = '#2BCB9A';
 const themeYellow = '#FFCF25';
-const lightGreen = '#E9FBF6';
 const red = '#EF3349';
 
 const CRM = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Enrollment data (still used for kids/parents stats)
-  const enrollmentData = [
-    { month: 'Jan', parents: 38, kids: 45 },
-    { month: 'Feb', parents: 43, kids: 52 },
-    { month: 'Mar', parents: 51, kids: 61 },
-    { month: 'Apr', parents: 49, kids: 58 },
-    { month: 'May', parents: 56, kids: 67 },
-    { month: 'Jun', parents: 62, kids: 73 },
-    { month: 'Jul', parents: 69, kids: 81 },
-    { month: 'Aug', parents: 75, kids: 89 }
-  ];
+  // States for API data
+  const [stats, setStats] = useState(null);
+  const [ageData, setAgeData] = useState([]);
+  const [cityUsageData, setCityUsageData] = useState([]);
 
-  // Age distribution for pie chart
-  const ageData = [
-    { name: '2-3 years', value: 28, color: '#EF3349' },
-    { name: '3-4 years', value: 35, color: '#2BCB9A' },
-    { name: '4-5 years', value: 26, color: '#FFCF25' }
-  ];
+  // ✅ Fixed theme colors for pie chart slices
+  const ageColors = [red, themeGreen, themeYellow, "#4A90E2", "#FF6F61"];
 
-  // City usage data for the new insights chart
-  const cityUsageData = [
-    { city: 'Karachi', users: 120 },
-    { city: 'Lahore', users: 95 },
-    { city: 'Islamabad', users: 75 },
-    { city: 'Faisalabad', users: 60 },
-    { city: 'Peshawar', users: 40 },
-  ];
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      // Get token from localStorage or wherever you store it
+      const token = localStorage.getItem("adminToken"); // example
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const statsRes = await axios.get(
+        "http://localhost:5000/api/insights/stats",
+        config
+      );
+      const ageRes = await axios.get(
+        "http://localhost:5000/api/insights/age-distribution",
+        config
+      );
+      const locationRes = await axios.get(
+        "http://localhost:5000/api/insights/locations",
+        config
+      );
+      const ratingsRes = await axios.get(
+        "http://localhost:5000/api/insights/ratings",
+        config
+      );
+
+      // Age distribution transform
+      const formattedAgeData = ageRes.data.map((item) => ({
+        name: item._id ? item._id.toString() : "Unknown",
+        value: item.count,
+      }));
+
+      // City-wise transform
+      const formattedCityData = locationRes.data.reduce((acc, curr) => {
+        const cityIndex = acc.findIndex((item) => item.city === curr.city);
+        if (cityIndex !== -1) {
+          acc[cityIndex].users += curr.count;
+        } else {
+          acc.push({ city: curr.city, users: curr.count });
+        }
+        return acc;
+      }, []);
+
+      const avgRating =
+        ratingsRes.data.length > 0
+          ? (
+              ratingsRes.data.reduce((sum, r) => sum + r.avgRating, 0) /
+              ratingsRes.data.length
+            ).toFixed(2)
+          : 0;
+
+      const cleanChanges = {
+        users: statsRes.data?.changes?.users ?? 0,
+        active: statsRes.data?.changes?.active ?? 0,
+        avgRating: statsRes.data?.changes?.avgRating
+          ? parseFloat(statsRes.data.changes.avgRating)
+          : 0,
+      };
+
+      setStats({ ...statsRes.data, avgRating, changes: cleanChanges });
+      setAgeData(formattedAgeData);
+      setCityUsageData(formattedCityData);
+    } catch (err) {
+      console.error(
+        "Error fetching admin dashboard data",
+        err.response ? err.response.data : err.message
+      );
+    }
+  };
+
+  fetchData();
+}, []);
+
+
+  // ✅ Updated renderChange
+  const renderChange = (value) => {
+    if (value === undefined || value === null) return "--";
+
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    if (isNaN(num)) return "--";
+
+    const arrow = num >= 0 ? "↑" : "↓";
+    const color = num >= 0 ? "text-success" : "text-danger";
+
+    return (
+      <p className={`${color} mb-0`} style={{ fontSize: '0.9rem' }}>
+        <span className="me-1">{arrow}</span>
+        {Math.abs(num)} from last month
+      </p>
+    );
+  };
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
@@ -74,32 +149,32 @@ const CRM = () => {
         <div className="container-fluid p-0">
           <Row className="mb-4 g-4">
             {/* Total Kids Enrolled Card */}
-           <Col md={4}>
-  <Card className="shadow-sm" style={{ borderRadius: '12px', borderColor: '#e0e0e0' }}>
-    <Card.Body className="d-flex align-items-center justify-content-between p-4">
-      <div>
-        <h6 className="text-muted mb-1">Total Kids Enrolled</h6>
-        <h2 className="mb-0" style={{ fontWeight: 'bold' }}>89</h2>
-        <p className="text-success mb-0" style={{ fontSize: '0.9rem' }}>
-          <span className="me-1">↑</span>+12% from last month
-        </p>
-      </div>
-      <div
-        style={{
-          width: '60px',           // a bit larger circle
-          height: '60px',
-          borderRadius: '50%',
-          backgroundColor: red,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <GiBabyFace color="#fff" size={32} /> {/* bigger white baby icon */}
-      </div>
-    </Card.Body>
-  </Card>
-</Col>
+            <Col md={4}>
+              <Card className="shadow-sm" style={{ borderRadius: '12px', borderColor: '#e0e0e0' }}>
+                <Card.Body className="d-flex align-items-center justify-content-between p-4">
+                  <div>
+                    <h6 className="text-muted mb-1">Total Kids Enrolled</h6>
+                    <h2 className="mb-0" style={{ fontWeight: 'bold' }}>
+                      {stats ? stats.totalUsers : "--"}
+                    </h2>
+                    {stats && renderChange(stats.changes?.users)}
+                  </div>
+                  <div
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '50%',
+                      backgroundColor: red,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <GiBabyFace color="#fff" size={32} />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
 
             {/* Active Parent Accounts Card */}
             <Col md={4}>
@@ -107,10 +182,10 @@ const CRM = () => {
                 <Card.Body className="d-flex align-items-center justify-content-between p-4">
                   <div>
                     <h6 className="text-muted mb-1">Active Parent Accounts</h6>
-                    <h2 className="mb-0" style={{ fontWeight: 'bold' }}>75</h2>
-                    <p className="text-success mb-0" style={{ fontSize: '0.9rem' }}>
-                      <span className="me-1">↑</span>+8% from last month
-                    </p>
+                    <h2 className="mb-0" style={{ fontWeight: 'bold' }}>
+                      {stats ? stats.activeUsers : "--"}
+                    </h2>
+                    {stats && renderChange(stats.changes?.active)}
                   </div>
                   <div className="rounded-circle p-3" style={{ backgroundColor: themeGreen, color: '#fff' }}>
                     <Users size={32} strokeWidth={2.5} />
@@ -125,10 +200,10 @@ const CRM = () => {
                 <Card.Body className="d-flex align-items-center justify-content-between p-4">
                   <div>
                     <h6 className="text-muted mb-1">Average Rating</h6>
-                    <h2 className="mb-0" style={{ fontWeight: 'bold' }}>4.6</h2>
-                    <p className="text-success mb-0" style={{ fontSize: '0.9rem' }}>
-                      <span className="me-1">↑</span>+0.2 from last month
-                    </p>
+                    <h2 className="mb-0" style={{ fontWeight: 'bold' }}>
+                      {stats ? stats.avgRating : "--"}
+                    </h2>
+                    {stats && renderChange(stats.changes?.avgRating)}
                   </div>
                   <div className="rounded-circle p-3" style={{ backgroundColor: themeYellow, color: '#fff' }}>
                     <Star size={32} strokeWidth={2.5} />
@@ -158,7 +233,7 @@ const CRM = () => {
               </Card>
             </Col>
 
-            {/* Age Distribution Chart Card */}
+            {/* Age Distribution Chart */}
             <Col md={5}>
               <Card className="shadow-sm" style={{ borderRadius: '12px', borderColor: '#e0e0e0' }}>
                 <Card.Body className="p-4">
@@ -176,7 +251,7 @@ const CRM = () => {
                         dataKey="value"
                       >
                         {ageData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell key={`cell-${index}`} fill={ageColors[index % ageColors.length]} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -198,7 +273,7 @@ const CRM = () => {
           {/* Recent Activities */}
           <Row>
             <Col>
-              <RecentActivities />
+              <Feedback  />
             </Col>
           </Row>
         </div>

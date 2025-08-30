@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Alert, Card, Row, Col, Spinner } from 'react-bootstrap';
+import { Button, Card, Spinner, Collapse } from 'react-bootstrap';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import TopNavbar from '../components/TopNavbar';
-import { FaEnvelope, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaEnvelope, FaCheckCircle, FaTimesCircle, FaEye } from 'react-icons/fa';
 
 const themeGreen = '#2BCB9A';
 const themeYellow = '#FFCF25';
@@ -15,12 +15,12 @@ const ManageAccounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [hoveredCard, setHoveredCard] = useState(null); // for hover effect
+  const [expandedIndex, setExpandedIndex] = useState(null); // for view toggle
 
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users');
+        const res = await axios.get('http://localhost:5000/api/insights');
         setAccounts(res.data);
         setLoading(false);
       } catch (err) {
@@ -34,7 +34,7 @@ const ManageAccounts = () => {
 
   const toggleStatus = async (id) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/users/toggle-status/${id}`);
+      const res = await axios.put(`http://localhost:5000/api/insights/toggle-status/${id}`);
       const updated = accounts.map((acc) => (acc._id === id ? res.data : acc));
       setAccounts(updated);
     } catch (err) {
@@ -42,8 +42,13 @@ const ManageAccounts = () => {
     }
   };
 
+  const getFirstLetter = (name) => {
+    if (!name) return '?';
+    return name.trim().split(' ')[0][0].toUpperCase();
+  };
+
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#ffffff' }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#f5f5f5' }}>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <TopNavbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
@@ -51,123 +56,118 @@ const ManageAccounts = () => {
         style={{
           marginLeft: sidebarOpen ? '295px' : '0',
           padding: '2rem',
-          marginTop: '0px',
+          marginTop: '3rem', // increased top margin
           minHeight: '100vh',
-          backgroundColor: '#ffffff',
           transition: 'margin-left 0.3s ease',
         }}
       >
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <h2
-            className="mb-4"
-            style={{
-              color: themeGreen,
-              textAlign: 'center',
-              fontWeight: '700',
-              fontSize: '2rem',
-              marginTop: '0px',
-            }}
-          >
-            User Account Management
-          </h2>
+        {loading ? (
+          <div className="d-flex justify-content-center mt-5">
+            <Spinner animation="border" variant="success" />
+          </div>
+        ) : accounts.length === 0 ? (
+          <Card className="shadow-sm p-4">
+            No parent accounts found.
+          </Card>
+        ) : (
+          <div className="d-flex flex-column gap-3">
+            {accounts.map((acc, index) => (
+              <Card
+                key={index}
+                className="shadow-sm"
+                style={{
+                  borderRadius: '12px',
+                  backgroundColor: '#fff',
+                  padding: '1rem 1.5rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center">
+                  {/* Left Info */}
+                  <div className="d-flex align-items-center" style={{ gap: '1rem' }}>
+                    <div
+                      style={{
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        backgroundColor: acc.isActive ? themeGreen : themeYellow,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontWeight: '700',
+                        fontSize: '1.2rem',
+                      }}
+                    >
+                      {getFirstLetter(acc.kidName)}
+                    </div>
+                    <div>
+                      <h6 style={{ margin: 0, fontWeight: '600', color: black }}>{acc.kidName}</h6>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: '#666', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <FaEnvelope /> {acc.email}
+                      </p>
+                    </div>
+                  </div>
 
-          {loading ? (
-            <div className="d-flex justify-content-center mt-5">
-              <Spinner animation="border" variant="success" />
-            </div>
-          ) : accounts.length === 0 ? (
-            <Alert style={{ backgroundColor: themeYellow, fontWeight: '500' }}>
-              No parent accounts found.
-            </Alert>
-          ) : (
-            <Row xs={1} md={2} className="g-4">
-              {accounts.map((acc, index) => (
-                <Col key={index}>
-                  <Card
-  onMouseEnter={() => setHoveredCard(index)}
-  onMouseLeave={() => setHoveredCard(null)}
-  style={{
-    borderColor: themeGreen,
-    borderRadius: '12px',
-    backgroundColor:
-      hoveredCard === index
-        ? themeGreen
-        : acc.isActive
-        ? lightGreen
-        : lightYellow,
-    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.06)',
-    transition: 'all 0.4s ease',
-    opacity: acc.isActive ? 1 : 0.75,
-    transform: hoveredCard === index ? 'translateY(-5px)' : 'translateY(0)', // ✅ added move effect
-  }}
-  className="h-100"
->
+                  {/* Right Actions */}
+                  <div className="d-flex align-items-center" style={{ gap: '0.8rem' }}>
+                    <span
+                      style={{
+                        fontSize: '0.85rem',
+                        padding: '0.4rem 0.7rem',
+                        borderRadius: '12px',
+                        backgroundColor: acc.isActive ? themeGreen : themeYellow,
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
+                    >
+                      {acc.isActive ? <FaCheckCircle /> : <FaTimesCircle />}
+                      {acc.isActive ? 'Active' : 'Inactive'}
+                    </span>
 
-                    <Card.Body>
-                      <Card.Title
-                        style={{
-                          color: themeYellow,
-                          fontSize: '1.3rem',
-                          fontWeight: '600',
-                          marginBottom: '1rem',
-                        }}
-                      >
-                        {acc.kidName}
-                      </Card.Title>
+                    <Button
+                      size="sm"
+                      style={{
+                        backgroundColor: acc.isActive ? themeYellow : themeGreen,
+                        borderColor: acc.isActive ? themeYellow : themeGreen,
+                        fontWeight: '500',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
+                      onClick={() => toggleStatus(acc._id)}
+                    >
+                      {acc.isActive ? 'Deactivate' : 'Activate'}
+                    </Button>
 
-                      <Card.Text
-                        style={{
-                          color: black,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          marginBottom: '0.5rem',
-                        }}
-                      >
-                        <FaEnvelope /> <strong>Email:</strong> {acc.email}
-                      </Card.Text>
+                    <Button
+                      size="sm"
+                      variant="light"
+                      onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                      style={{ color: acc.isActive ? themeGreen : themeYellow, fontWeight: '600' }}
+                    >
+                      <FaEye />
+                    </Button>
+                  </div>
+                </div>
 
-                      <Card.Text
-                        style={{
-                          color: acc.isActive ? 'green' : 'red',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                        }}
-                      >
-                        <strong>Status:</strong>{' '}
-                        {acc.isActive ? (
-                          <>
-                            <FaCheckCircle /> Active
-                          </>
-                        ) : (
-                          <>
-                            <FaTimesCircle /> Inactive
-                          </>
-                        )}
-                      </Card.Text>
-
-                      <div className="d-flex justify-content-end mt-3">
-                        <Button
-                          size="sm"
-                          style={{
-                            backgroundColor: acc.isActive ? '#EF3349' : themeGreen,
-                            borderColor: acc.isActive ? '#EF3349' : themeGreen,
-                            fontWeight: '500',
-                            color: '#fff',
-                          }}
-                          onClick={() => toggleStatus(acc._id)}
-                        >
-                          {acc.isActive ? 'Deactivate' : 'Activate'}
-                        </Button>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          )}
-        </div>
+                {/* Expanded Info */}
+                <Collapse in={expandedIndex === index}>
+                  <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#333' }}>
+                    <p><strong>Kid Name:</strong> {acc.kidName}</p>
+                    <p><strong>Email:</strong> {acc.email}</p>
+                    <p><strong>Status:</strong> {acc.isActive ? 'Active' : 'Inactive'}</p>
+                  </div>
+                </Collapse>
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

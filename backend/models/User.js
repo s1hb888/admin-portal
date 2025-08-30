@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema({
     enum: ['parent', 'admin', 'kid'],
     default: 'parent',
   },
+  city: {
+    type: String,
+    required: true, // required for location insights
+  },
+  area: {
+    type: String,
+    required: true, // required for location insights
+  },
   profileImage: {
     type: String,
     default: '',

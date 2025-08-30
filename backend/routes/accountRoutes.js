@@ -2,10 +2,6 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const Admins = require("../models/Admin");
 
-const {
-  getAllParentAccounts,
-  toggleAccountStatus,
-} = require("../controllers/accountController");
 
 const router = express.Router();
 const JWT_SECRET = "your_secret_key";
@@ -59,9 +55,5 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Error in Login", error: err.message });
   }
 });
-
-// ✅ Existing Parent Accounts routes
-router.get("/", getAllParentAccounts);
-router.put("/toggle-status/:id", toggleAccountStatus);
 
 module.exports = router;
