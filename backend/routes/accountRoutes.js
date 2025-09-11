@@ -164,18 +164,17 @@ router.post("/reset-password/:token", async (req, res) => {
 
     const admin = await Admins.findOne({
       resetPasswordToken: token,
-      resetPasswordExpire: { $gt: Date.now() }, // ✅ Token valid check
+      resetPasswordExpire: { $gt: Date.now() },
     });
 
     if (!admin) {
       return res.status(400).json({ message: "Invalid or expired reset token" });
     }
 
-    // ✅ Hash new password
-    const salt = await bcrypt.genSalt(10);
-    admin.password = await bcrypt.hash(password, salt);
+    // ✅ Assign new password (pre-save hook will hash it)
+    admin.password = password;
 
-    // ✅ Reset token clear
+    // Clear reset token fields
     admin.resetPasswordToken = undefined;
     admin.resetPasswordExpire = undefined;
 
