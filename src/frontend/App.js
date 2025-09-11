@@ -3,13 +3,15 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../index.css'; // index.css import
-
+import Terms from "./Terms";
+import ForgotPassword from "./ForgotPassword";
 // Components / Pages
 import Login from './Login';
 import Signup from './Signup';
 import CRM from './CRM';
 import AddNewVideo from './AddNewVideo';
 import ManageCourses from './ManageCourses';
+import ResetPassword from "./ResetPassword";
 import ManageQuizzes from './ManageQuizzes';
 import ManageAccounts from './ManageAccounts';
 import ManageVideos from './ManageVideos';
@@ -56,9 +58,11 @@ function App() {
         <Route path="/admin/fruits-crud" element={isLoggedIn ? <FruitsCRUD /> : <Navigate to="/admin/login" />} />
         <Route path="/admin/vegetables-crud" element={isLoggedIn ? <VegetablesCRUD /> : <Navigate to="/admin/login" />} />
         <Route path="/admin/bodyparts-crud" element={isLoggedIn ? <BodypartsCRUD /> : <Navigate to="/admin/login" />} />
-
+        <Route path="/terms" element={<Terms />} /> 
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* CRM route */}
         <Route path="/admin/crm" element={isLoggedIn ? <CRM /> : <Navigate to="/admin/login" />} />
+<Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );

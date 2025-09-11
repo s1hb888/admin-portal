@@ -20,9 +20,32 @@ const adminSchema = new mongoose.Schema({
     minlength: 6
   },
   profileImage: {
-  type: String,
-  default: null,
-}
+    type: String,
+    default: null,
+  },
+
+  // 🔹 New fields for email verification
+  isVerified: {
+    type: Boolean,
+    default: false, // jab tak email confirm na ho
+  },
+  verificationToken: {
+    type: String,
+    default: null, // store temporary token
+  },
+  verificationTokenExpires: {
+    type: Date,
+    default: null, // token expiry date/time
+  },
+    resetPasswordToken: {
+    type: String,
+    default: null, // store temporary token
+  },
+  resetPasswordExpire: {
+    type: Date,
+    default: null, // token expiry date/time
+  }
+
 }, { timestamps: true });
 
 // Hash password before saving
