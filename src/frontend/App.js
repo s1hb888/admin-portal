@@ -25,7 +25,9 @@ import FruitsCRUD from './FruitsCRUD';
 import VegetablesCRUD from './VegetablesCRUD';
 import BodypartsCRUD from './BodypartsCRUD';
 import Profile from './Profile';
-
+import DuaCrud from "./DuaCrud"; 
+import BasicQuestionsCrud from "./BasicQuestionsCrud"; 
+import CountingCrud from "./CountingCrud"; 
 function App() {
   // ✅ Check if admin is logged in using token from localStorage
   const isLoggedIn = !!localStorage.getItem("adminToken");
@@ -62,8 +64,12 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* CRM route */}
         <Route path="/admin/crm" element={isLoggedIn ? <CRM /> : <Navigate to="/admin/login" />} />
-<Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/dua-crud" element={<DuaCrud />} />
+        <Route path="/admin/basic-questions-crud" element={<BasicQuestionsCrud />} />
+        <Route path="/admin/counting-crud" element={<CountingCrud />} />
       </Routes>
+
     </Router>
   );
 }

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaAppleAlt, FaCarrot, FaBookOpen, FaChild, FaFont } from 'react-icons/fa';
+import { FaAppleAlt, FaCarrot, FaBookOpen, FaChild, FaFont, FaHashtag } from 'react-icons/fa';
 
 const ManageGK = () => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false); // ✅ modal state
 
   const red = '#EF3349';
   const green = '#2BCB9A';
@@ -36,10 +37,16 @@ const ManageGK = () => {
       path: '/admin/bodyparts-crud',
     },
     {
+      title: 'Counting (1-10)',
+      desc: 'Manage numbers from 1 to 10.',
+      icon: <FaHashtag size={28} color={red} />,
+      path: '/admin/counting-crud',
+    },
+    {
       title: 'Islamic Studies',
       desc: 'Manage Islamic knowledge and values.',
       icon: <FaBookOpen size={28} color={red} />,
-      path: '/admin/islamic-studies-crud',
+      path: null, // ✅ direct path nahi, popup khulega
     },
   ];
 
@@ -57,7 +64,7 @@ const ManageGK = () => {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{ color: green, fontWeight: '700', fontSize: '2.2rem' }}>
-          Manage  General Knowledge Content
+            Manage General Knowledge Content
           </h2>
           <p style={{ color: '#555', fontSize: '1rem', marginTop: '10px' }}>
             Manage learning categories like vowels, fruits, vegetables, and more.
@@ -88,7 +95,11 @@ const ManageGK = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                 }}
-                onClick={() => path && navigate(path)}
+                onClick={() =>
+                  title === 'Islamic Studies'
+                    ? setShowModal(true) // ✅ modal open
+                    : path && navigate(path)
+                }
               >
                 <div
                   className="card-body text-center"
@@ -131,6 +142,76 @@ const ManageGK = () => {
           ))}
         </div>
       </main>
+
+      {/* ✅ Modal */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: '#fff',
+              padding: '2rem',
+              borderRadius: '12px',
+              width: '350px',
+              textAlign: 'center',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h4 style={{ marginBottom: '1.5rem', color: green }}>
+              Islamic Studies Options
+            </h4>
+
+            <button
+              onClick={() => navigate('/admin/dua-crud')}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '10px',
+                marginBottom: '10px',
+                backgroundColor: green,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+              }}
+            >
+              Manage Dua
+            </button>
+
+            <button
+              onClick={() => navigate('/admin/basic-questions-crud')}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '10px',
+                backgroundColor: red,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+              }}
+            >
+              Manage Basic Questions
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Hover CSS */}
       <style>
