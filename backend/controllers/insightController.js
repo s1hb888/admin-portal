@@ -1,66 +1,11 @@
 const User = require('../models/User');
 const Feedback = require('../models/Feedback');
-/*const getDashboardData = async (req, res) => {
-  try {
-    // total kids enrolled
-    const totalKids = await User.countDocuments();
-
-    // active parent accounts
-    const activeParents = await User.countDocuments({ role: "parent", isActive: true });
-
-    // last month increment (dummy abhi ke liye)
-    const lastMonthIncrease = 5; // TODO: calculate from createdAt
-
-    // age distribution
-    const ageDistribution = await User.aggregate([
-      { $group: { _id: "$kidAge", count: { $sum: 1 } } },
-      { $sort: { _id: 1 } }
-    ]);
-    const formattedAge = ageDistribution.map(item => ({
-      age: item._id ? item._id.toString() : "Unknown",
-      count: item.count
-    }));
-
-    // gender distribution (only if kidGender exists in schema)
-    let formattedGender = [];
-    if (User.schema.path("kidGender")) {
-      const genderDistribution = await User.aggregate([
-        { $group: { _id: "$kidGender", count: { $sum: 1 } } }
-      ]);
-      formattedGender = genderDistribution.map(item => ({
-        gender: item._id ? item._id : "Unknown",
-        count: item.count
-      }));
-    }
-
-    res.json({
-      stats: {
-        totalKids,
-        activeParents,
-        lastMonthIncrease
-      },
-      distributions: {
-        age: formattedAge,
-        gender: formattedGender
-      }
-    });
-  } catch (err) {
-    console.error("Error fetching dashboard data:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-*/
 
 // ✅ Age distribution
 const getAgeDistribution = async (req, res) => {
   try {
     const distribution = await User.aggregate([
-      {
-        $group: {
-          _id: "$kidAge",
-          count: { $sum: 1 }
-        }
-      },
+      { $group: { _id: "$kidAge", count: { $sum: 1 } } },
       { $sort: { _id: 1 } }
     ]);
     res.json(distribution);
@@ -69,7 +14,7 @@ const getAgeDistribution = async (req, res) => {
   }
 };
 
-// ✅ Gender distribution (dummy for now, since gender not in schema)
+// ✅ Gender distribution (dummy placeholder)
 const getGenderDistribution = async (req, res) => {
   try {
     res.json([
@@ -81,87 +26,73 @@ const getGenderDistribution = async (req, res) => {
   }
 };
 
+// ✅ Overall stats and monthly comparison
 const getUserStats = async (req, res) => {
   try {
     const now = new Date();
-
-    // ---------- Determine last & previous month/year ----------
     const lastMonth = now.getUTCMonth() === 0 ? 11 : now.getUTCMonth() - 1;
     const lastMonthYear = now.getUTCMonth() === 0 ? now.getUTCFullYear() - 1 : now.getUTCFullYear();
-
     const prevMonth = lastMonth === 0 ? 11 : lastMonth - 1;
     const prevMonthYear = lastMonth === 0 ? lastMonthYear - 1 : lastMonthYear;
 
-    // ---------- Total & active users ----------
+    // ---------- Total and active users ----------
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ role: "parent", isActive: true });
 
-    // ---------- Last month counts ----------
-    const lastMonthUsersAgg = await User.aggregate([
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } } },
-      { $match: { month: lastMonth + 1, year: lastMonthYear } },
-      { $count: "count" }
-    ]);
-    const lastMonthUsers = lastMonthUsersAgg[0]?.count || 0;
+    // ---------- Month-wise new user stats ----------
+    const monthCount = async (month, year, filter = {}) => {
+      const result = await User.aggregate([
+        { $match: filter },
+        { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } } },
+        { $match: { month: month + 1, year } },
+        { $count: "count" }
+      ]);
+      return result[0]?.count || 0;
+    };
 
-    const lastMonthActiveAgg = await User.aggregate([
-      { $match: { role: "parent", isActive: true } },
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } } },
-      { $match: { month: lastMonth + 1, year: lastMonthYear } },
-      { $count: "count" }
-    ]);
-    const lastMonthActive = lastMonthActiveAgg[0]?.count || 0;
+    const lastMonthUsers = await monthCount(lastMonth, lastMonthYear);
+    const prevMonthUsers = await monthCount(prevMonth, prevMonthYear);
+    const lastMonthActive = await monthCount(lastMonth, lastMonthYear, { role: "parent", isActive: true });
+    const prevMonthActive = await monthCount(prevMonth, prevMonthYear, { role: "parent", isActive: true });
 
-    // ---------- Previous month counts ----------
-    const prevMonthUsersAgg = await User.aggregate([
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } } },
-      { $match: { month: prevMonth + 1, year: prevMonthYear } },
-      { $count: "count" }
+    // ---------- Average satisfaction (composite score) ----------
+    const avgSatisfaction = await Feedback.aggregate([
+      {
+        $group: {
+          _id: null,
+          avgEaseOfUse: { $avg: "$appEaseOfUse" },
+          avgPerformance: { $avg: "$performanceRating" },
+          avgDesign: { $avg: "$designSatisfaction" },
+          avgFeature: { $avg: "$featureUsefulness" }
+        }
+      }
     ]);
-    const prevMonthUsers = prevMonthUsersAgg[0]?.count || 0;
 
-    const prevMonthActiveAgg = await User.aggregate([
-      { $match: { role: "parent", isActive: true } },
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } } },
-      { $match: { month: prevMonth + 1, year: prevMonthYear } },
-      { $count: "count" }
-    ]);
-    const prevMonthActive = prevMonthActiveAgg[0]?.count || 0;
+    const averages = avgSatisfaction[0] || {};
+    const compositeAvg =
+      ((averages.avgEaseOfUse || 0) +
+        (averages.avgPerformance || 0) +
+        (averages.avgDesign || 0) +
+        (averages.avgFeature || 0)) /
+      4;
 
-    // ---------- Ratings ----------
-    const ratingsData = await Feedback.aggregate([
-      { $group: { _id: null, avgRating: { $avg: "$rating" } } }
-    ]);
-    const avgRating = ratingsData[0]?.avgRating || 0;
-
-    const lastMonthRatingsAgg = await Feedback.aggregate([
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" }, rating: 1 } },
-      { $match: { month: lastMonth + 1, year: lastMonthYear } },
-      { $group: { _id: null, avgRating: { $avg: "$rating" } } }
-    ]);
-    const avgRatingLastMonth = lastMonthRatingsAgg[0]?.avgRating || 0;
-
-    const prevMonthRatingsAgg = await Feedback.aggregate([
-      { $project: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" }, rating: 1 } },
-      { $match: { month: prevMonth + 1, year: prevMonthYear } },
-      { $group: { _id: null, avgRating: { $avg: "$rating" } } }
-    ]);
-    const avgRatingPrevMonth = prevMonthRatingsAgg[0]?.avgRating || 0;
-
-    // ---------- Differences ----------
+    // ---------- Calculate month differences ----------
     const diffUsers = lastMonthUsers - prevMonthUsers;
     const diffActive = lastMonthActive - prevMonthActive;
-    const diffRating = avgRatingLastMonth - avgRatingPrevMonth;
 
-    // ---------- Response ----------
     res.json({
       totalUsers,
       activeUsers,
-      avgRating: avgRating.toFixed(2),
+      avgSatisfaction: compositeAvg.toFixed(2),
+      avgBreakdown: {
+        easeOfUse: averages.avgEaseOfUse?.toFixed(2) || 0,
+        performance: averages.avgPerformance?.toFixed(2) || 0,
+        design: averages.avgDesign?.toFixed(2) || 0,
+        feature: averages.avgFeature?.toFixed(2) || 0
+      },
       changes: {
         users: diffUsers,
-        active: diffActive,
-        avgRating: diffRating.toFixed(2)
+        active: diffActive
       }
     });
 
@@ -171,7 +102,7 @@ const getUserStats = async (req, res) => {
   }
 };
 
-
+// ✅ Fetch all parent accounts
 const getAllParentAccounts = async (req, res) => {
   try {
     const parents = await User.find({ role: 'parent' });
@@ -181,7 +112,7 @@ const getAllParentAccounts = async (req, res) => {
   }
 };
 
-// ✅ Location insights (city + area)
+// ✅ Location insights
 const getLocationInsights = async (req, res) => {
   try {
     const locationData = await User.aggregate([
@@ -194,7 +125,6 @@ const getLocationInsights = async (req, res) => {
       { $sort: { "_id.city": 1, "_id.area": 1 } }
     ]);
 
-    // Format as { city, area, count }
     const formatted = locationData.map(item => ({
       city: item._id.city || "Unknown",
       area: item._id.area || "Unknown",
@@ -208,37 +138,38 @@ const getLocationInsights = async (req, res) => {
   }
 };
 
-// ✅ Average rating insights
+// ✅ Ratings insights (now based on all rating fields)
 const getRatingsInsights = async (req, res) => {
   try {
-    const ratingsData = await Feedback.aggregate([
+    const ratingMetrics = await Feedback.aggregate([
       {
         $group: {
-          _id: "$course",
-          avgRating: { $avg: "$rating" },
-          totalRatings: { $sum: 1 }
+          _id: null,
+          avgEaseOfUse: { $avg: "$appEaseOfUse" },
+          avgPerformance: { $avg: "$performanceRating" },
+          avgDesign: { $avg: "$designSatisfaction" },
+          avgFeature: { $avg: "$featureUsefulness" }
         }
-      },
-      { $sort: { _id: 1 } }
+      }
     ]);
-
-    res.json(ratingsData);
+    res.json(ratingMetrics[0] || {});
   } catch (err) {
     console.error("Error fetching ratings insights:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// ✅ Fetch all feedbacks
 const getAllFeedbacks = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find().sort({ createdAt: -1 }); // latest first
+    const feedbacks = await Feedback.find().sort({ dateOfFeedback: -1 });
     res.json(feedbacks);
   } catch (err) {
     res.status(500).json({ message: "Error fetching feedbacks", error: err });
   }
 };
 
-
+// ✅ Toggle parent account status
 const toggleAccountStatus = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -258,9 +189,7 @@ module.exports = {
   getAgeDistribution,
   getGenderDistribution,
   getUserStats,
-  getLocationInsights,  
+  getLocationInsights,
   getRatingsInsights,
-   getAllFeedbacks  
+  getAllFeedbacks
 };
-
-

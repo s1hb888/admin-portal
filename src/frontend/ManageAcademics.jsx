@@ -1,139 +1,255 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaFont, FaLanguage, FaCalculator } from 'react-icons/fa';
+import { FaFont, FaLanguage, FaCalculator, FaBookOpen, FaChartLine, FaGraduationCap, FaArrowRight } from 'react-icons/fa';
 
 const ManageAcademics = () => {
   const navigate = useNavigate();
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   const red = '#EF3349';
   const green = '#2BCB9A';
-  const cardBackground = '#e1f8f2';
+  const yellow = '#FFCF25';
   const textDark = '#222';
+  const textMuted = '#6c757d';
 
   const cards = [
     {
       title: 'English Alphabets',
-      desc: 'Manage English A to Z alphabets.',
-      icon: <FaFont size={28} color={red} />,
+      desc: 'Manage English A to Z alphabets and pronunciation.',
+      icon: <FaFont size={32} />,
       path: '/admin/alphabet-crud',
+      color: red,
+      bgPattern: 'ABC'
     },
     {
       title: 'Urdu Alphabets',
-      desc: 'Manage Urdu Alif to Yay alphabets.',
-      icon: <FaLanguage size={28} color={red} />,
+      desc: 'Manage Urdu Alif to Yay alphabets and pronunciation.',
+      icon: <FaLanguage size={32} />,
       path: '/admin/urdu-crud',
+      color: green,
+      bgPattern: 'اردو'
     },
     {
-      title: 'Maths',
-      desc: 'Manage numbers.',
-      icon: <FaCalculator size={28} color={red} />,
+      title: 'Mathematics',
+      desc: 'Manage numbers, counting, and basic math concepts.',
+      icon: <FaCalculator size={32} />,
       path: '/admin/maths-crud',
+      color: yellow,
+      bgPattern: '123'
     },
   ];
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      {/* Main Content */}
-      <main
-        style={{
-          padding: '2rem',
-          minHeight: '100vh',
-          backgroundColor: '#fff',
-          transition: 'margin-left 0.3s ease',
-        }}
-      >
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ color: green, fontWeight: '700', fontSize: '2.2rem' }}>
-            Manage Academic Content
-          </h2>
-          <p style={{ color: '#555', fontSize: '1rem', marginTop: '10px' }}>
-            Manage learning content like Alphabets and more.
-          </p>
+    <div style={{ 
+      fontFamily: "'Inter', sans-serif",
+      backgroundColor: '#f3f4f6',
+      minHeight: '100vh',
+      padding: '2rem'
+    }}>
+      {/* Header Section with Visual */}
+      <div style={{
+        marginBottom: '3rem',
+        textAlign: 'center',
+        position: 'relative'
+      }}>
+        {/* Decorative Background Elements */}
+        <div style={{
+          position: 'absolute',
+          top: '-20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '1rem',
+          opacity: 0.08,
+          zIndex: 0
+        }}>
+          <FaBookOpen size={80} color={green} />
+          <FaChartLine size={80} color={red} />
+          <FaGraduationCap size={80} color={yellow} />
         </div>
 
-        {/* Cards */}
-        <div
-          className="row"
-          style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}
-        >
-          {cards.map(({ title, desc, icon, path }, i) => (
+        {/* Icon Badge */}
+        <div style={{
+          width: '100px',
+          height: '100px',
+          borderRadius: '24px',
+          background: `linear-gradient(135deg, ${red}, ${red}DD)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.5rem',
+          boxShadow: `0 10px 30px ${red}40`,
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <FaBookOpen size={48} color="#fff" />
+        </div>
+
+        <h1 style={{ 
+          color: textDark, 
+          fontWeight: '700', 
+          fontSize: '2rem',
+          marginBottom: '0.5rem',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          Academic Content Management
+        </h1>
+        <p style={{ 
+          color: textMuted, 
+          fontSize: '1rem',
+          maxWidth: '600px',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          Manage educational content including alphabets, numbers, and learning materials
+        </p>
+      </div>
+
+      {/* Academic Cards */}
+      <div style={{ 
+        maxWidth: '1200px', 
+        margin: '0 auto',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '2rem',
+        justifyContent: 'center'
+      }}>
+        {cards.map((card, i) => (
+          <div 
+            key={i}
+            style={{ 
+              width: '350px',
+              height: '320px'
+            }}
+          >
             <div
-              key={i}
-              className="col-md-3 mb-4"
-              style={{ padding: '0 15px', maxWidth: '350px' }}
+              className="academic-card"
+              onMouseEnter={() => setHoveredCard(i)}
+              onMouseLeave={() => setHoveredCard(null)}
+              onClick={() => card.path && navigate(card.path)}
+              style={{
+                borderRadius: '16px',
+                cursor: 'pointer',
+                backgroundColor: '#fff',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: hoveredCard === i ? 'translateY(-8px)' : 'translateY(0)',
+                boxShadow: hoveredCard === i 
+                  ? '0 20px 40px rgba(0,0,0,0.12)' 
+                  : '0 2px 8px rgba(0,0,0,0.08)',
+                overflow: 'hidden',
+                position: 'relative',
+                height: '100%',
+                border: 'none'
+              }}
             >
-              <div
-                className="card shadow-sm border-0 card-hover"
-                style={{
-                  borderTop: `5px solid ${green}`,
-                  borderRadius: '16px',
-                  cursor: 'pointer',
-                  backgroundColor: cardBackground,
-                  transition: 'all 0.3s ease',
-                  minHeight: '230px',
+              {/* Colored top accent */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '5px',
+                background: `linear-gradient(90deg, ${card.color}, ${card.color}DD)`,
+              }} />
+
+              {/* Background Pattern */}
+              <div style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                fontSize: '80px',
+                fontWeight: '900',
+                color: `${card.color}10`,
+                opacity: hoveredCard === i ? 0.2 : 0.15,
+                transition: 'opacity 0.3s ease',
+                userSelect: 'none',
+                pointerEvents: 'none'
+              }}>
+                {card.bgPattern}
+              </div>
+
+              <div style={{ padding: '2.5rem' }}>
+                {/* Icon Container */}
+                <div style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '20px',
+                  background: hoveredCard === i 
+                    ? `linear-gradient(135deg, ${card.color}, ${card.color}DD)`
+                    : '#f8f9fa',
                   display: 'flex',
-                  flexDirection: 'column',
+                  alignItems: 'center',
                   justifyContent: 'center',
-                }}
-                onClick={() => path && navigate(path)}
-              >
-                <div
-                  className="card-body text-center"
-                  style={{ padding: '2rem 1rem' }}
-                >
-                  <div
+                  marginBottom: '1.5rem',
+                  transition: 'all 0.3s ease',
+                  color: hoveredCard === i ? '#fff' : card.color,
+                  boxShadow: hoveredCard === i 
+                    ? `0 8px 20px ${card.color}40` 
+                    : 'none'
+                }}>
+                  {card.icon}
+                </div>
+
+                {/* Title */}
+                <h3 style={{
+                  color: textDark,
+                  fontWeight: '700',
+                  fontSize: '1.5rem',
+                  marginBottom: '0.75rem',
+                  transition: 'color 0.3s ease'
+                }}>
+                  {card.title}
+                </h3>
+
+                {/* Description */}
+                <p style={{
+                  color: textMuted,
+                  fontSize: '0.95rem',
+                  lineHeight: '1.6',
+                  marginBottom: '2rem'
+                }}>
+                  {card.desc}
+                </p>
+
+                {/* Action Button */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  color: card.color,
+                  fontWeight: '600',
+                  fontSize: '0.95rem',
+                  transition: 'gap 0.3s ease'
+                }}>
+                  <span>Manage Content</span>
+                  <FaArrowRight 
+                    size={16} 
                     style={{
-                      width: '60px',
-                      height: '60px',
-                      margin: '0 auto 15px',
-                      borderRadius: '50%',
-                      backgroundColor: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
+                      transition: 'transform 0.3s ease',
+                      transform: hoveredCard === i ? 'translateX(5px)' : 'translateX(0)'
                     }}
-                  >
-                    {icon}
-                  </div>
-                  <h5
-                    className="card-title"
-                    style={{
-                      color: textDark,
-                      fontWeight: '700',
-                      fontSize: '1.1rem',
-                    }}
-                  >
-                    {title}
-                  </h5>
-                  <p
-                    className="card-text"
-                    style={{ color: '#666', fontSize: '0.95rem' }}
-                  >
-                    {desc}
-                  </p>
+                  />
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </main>
 
-      {/* Hover CSS */}
-      <style>
-        {`
-          .card-hover:hover {
-            background-color: ${green} !important;
-            color: white !important;
-            transform: scale(1.04);
-          }
-          .card-hover:hover .card-title,
-          .card-hover:hover .card-text {
-            color: white !important;
-          }
-        `}
-      </style>
+              {/* Decorative gradient overlay on hover */}
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: '150px',
+                height: '150px',
+                background: `radial-gradient(circle at center, ${card.color}15, transparent)`,
+                opacity: hoveredCard === i ? 1 : 0,
+                transition: 'opacity 0.3s ease',
+                pointerEvents: 'none'
+              }} />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
