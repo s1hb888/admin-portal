@@ -37,81 +37,117 @@ const CRM = () => {
   const ageColors = [red, themeGreen, themeYellow, "#4A90E2", "#FF6F61"];
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      // Get token from localStorage or wherever you store it
-      const token = localStorage.getItem("adminToken"); // example
+    const fetchData = async () => {
+      try {
+        // Get token from localStorage or wherever you store it
+        const token = localStorage.getItem("adminToken");
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
 
-      const statsRes = await axios.get(
-        "http://localhost:5000/api/insights/stats",
-        config
-      );
-      const ageRes = await axios.get(
-        "http://localhost:5000/api/insights/age-distribution",
-        config
-      );
-      const locationRes = await axios.get(
-        "http://localhost:5000/api/insights/locations",
-        config
-      );
-      const ratingsRes = await axios.get(
-        "http://localhost:5000/api/insights/ratings",
-        config
-      );
+        const statsRes = await axios.get(
+          "http://localhost:5000/api/insights/stats",
+          config
+        );
+        const ageRes = await axios.get(
+          "http://localhost:5000/api/insights/age-distribution",
+          config
+        );
+        const locationRes = await axios.get(
+          "http://localhost:5000/api/insights/locations",
+          config
+        );
+        const feedbacksRes = await axios.get(
+          "http://localhost:5000/api/insights/feedbacks",
+          config
+        );
 
-      // Age distribution transform
-      const formattedAgeData = ageRes.data.map((item) => ({
-        name: item._id ? item._id.toString() : "Unknown",
-        value: item.count,
-      }));
+        // Age distribution transform
+        const formattedAgeData = ageRes.data.map((item) => ({
+          name: item._id ? item._id.toString() : "Unknown",
+          value: item.count,
+        }));
 
-      // City-wise transform
-      const formattedCityData = locationRes.data.reduce((acc, curr) => {
-        const cityIndex = acc.findIndex((item) => item.city === curr.city);
-        if (cityIndex !== -1) {
-          acc[cityIndex].users += curr.count;
-        } else {
-          acc.push({ city: curr.city, users: curr.count });
+        // City-wise transform
+        const formattedCityData = locationRes.data.reduce((acc, curr) => {
+          const cityIndex = acc.findIndex((item) => item.city === curr.city);
+          if (cityIndex !== -1) {
+            acc[cityIndex].users += curr.count;
+          } else {
+            acc.push({ city: curr.city, users: curr.count });
+          }
+          return acc;
+        }, []);
+
+        // ✅ Calculate overall average rating from feedbacks
+        let avgRating = 0;
+        let prevMonthAvgRating = 0;
+
+        if (feedbacksRes.data.length > 0) {
+          // Current month calculation
+          const now = new Date();
+          const currentMonth = now.getMonth();
+          const currentYear = now.getFullYear();
+
+          // Filter current month feedbacks
+          const currentMonthFeedbacks = feedbacksRes.data.filter(fb => {
+            const fbDate = new Date(fb.dateOfFeedback);
+            return fbDate.getMonth() === currentMonth && fbDate.getFullYear() === currentYear;
+          });
+
+          // Filter previous month feedbacks
+          const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+          const prevMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+          const prevMonthFeedbacks = feedbacksRes.data.filter(fb => {
+            const fbDate = new Date(fb.dateOfFeedback);
+            return fbDate.getMonth() === prevMonth && fbDate.getFullYear() === prevMonthYear;
+          });
+
+          // Calculate overall average for current month (or all if no current month data)
+          const feedbacksToUse = currentMonthFeedbacks.length > 0 ? currentMonthFeedbacks : feedbacksRes.data;
+          const totalRating = feedbacksToUse.reduce((sum, fb) => {
+            return sum + ((fb.appEaseOfUse + fb.performanceRating + fb.designSatisfaction + fb.featureUsefulness) / 4);
+          }, 0);
+          avgRating = (totalRating / feedbacksToUse.length).toFixed(2);
+
+          // Calculate previous month average
+          if (prevMonthFeedbacks.length > 0) {
+            const prevTotalRating = prevMonthFeedbacks.reduce((sum, fb) => {
+              return sum + ((fb.appEaseOfUse + fb.performanceRating + fb.designSatisfaction + fb.featureUsefulness) / 4);
+            }, 0);
+            prevMonthAvgRating = (prevTotalRating / prevMonthFeedbacks.length).toFixed(2);
+          }
         }
-        return acc;
-      }, []);
 
-      const avgRating =
-        ratingsRes.data.length > 0
-          ? (
-              ratingsRes.data.reduce((sum, r) => sum + r.avgRating, 0) /
-              ratingsRes.data.length
-            ).toFixed(2)
-          : 0;
+        // Calculate change in rating
+        const ratingChange = (parseFloat(avgRating) - parseFloat(prevMonthAvgRating)).toFixed(2);
 
-      const cleanChanges = {
-        users: statsRes.data?.changes?.users ?? 0,
-        active: statsRes.data?.changes?.active ?? 0,
-        avgRating: statsRes.data?.changes?.avgRating
-          ? parseFloat(statsRes.data.changes.avgRating)
-          : 0,
-      };
+        const cleanChanges = {
+          users: statsRes.data?.changes?.users ?? 0,
+          active: statsRes.data?.changes?.active ?? 0,
+          avgRating: parseFloat(ratingChange) || 0,
+        };
 
-      setStats({ ...statsRes.data, avgRating, changes: cleanChanges });
-      setAgeData(formattedAgeData);
-      setCityUsageData(formattedCityData);
-    } catch (err) {
-      console.error(
-        "Error fetching admin dashboard data",
-        err.response ? err.response.data : err.message
-      );
-    }
-  };
+        setStats({ 
+          ...statsRes.data, 
+          avgRating, 
+          changes: cleanChanges 
+        });
+        setAgeData(formattedAgeData);
+        setCityUsageData(formattedCityData);
+      } catch (err) {
+        console.error(
+          "Error fetching admin dashboard data",
+          err.response ? err.response.data : err.message
+        );
+      }
+    };
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   // ✅ Updated renderChange
   const renderChange = (value) => {
@@ -126,7 +162,7 @@ const CRM = () => {
     return (
       <p className={`${color} mb-0`} style={{ fontSize: '0.9rem' }}>
         <span className="me-1">{arrow}</span>
-        {Math.abs(num)} from last month
+        {Math.abs(num).toFixed(2)} from last month
       </p>
     );
   };
