@@ -27,7 +27,15 @@ import BodypartsCRUD from './BodypartsCRUD';
 import Profile from './Profile';
 import DuaCrud from "./DuaCrud"; 
 import BasicQuestionsCrud from "./BasicQuestionsCrud"; 
-import CountingCrud from "./CountingCrud"; 
+import CountingCrud from "./CountingCrud";
+import FruitQuizAdmin from "./FruitQuizAdmin";
+import ColorQuizAdmin from "./ColorQuizAdmin";
+import VegetableQuizAdmin from "./VegetableQuizAdmin";
+import CountingQuizAdmin from "./CountingQuizAdmin";   
+import ShapeQuizAdmin from "./ShapeQuizAdmin";
+import VowelQuizAdmin from "./VowelQuizAdmin"; 
+import BodyPartsQuizAdmin from "./BodyPartsQuizAdmin";
+
 function App() {
   // ✅ Check if admin is logged in using token from localStorage
   const isLoggedIn = !!localStorage.getItem("adminToken");
@@ -68,6 +76,13 @@ function App() {
         <Route path="/admin/dua-crud" element={<DuaCrud />} />
         <Route path="/admin/basic-questions-crud" element={<BasicQuestionsCrud />} />
         <Route path="/admin/counting-crud" element={<CountingCrud />} />
+        <Route path="/fruit-quiz-admin" element={isLoggedIn ? <FruitQuizAdmin /> : <Navigate to="/admin/login" />} />
+        <Route path="/color-quiz-admin" element={isLoggedIn ? <ColorQuizAdmin /> : <Navigate to="/admin/login" />} />
+        <Route path="/vegetable-quiz-admin" element={isLoggedIn ? <VegetableQuizAdmin/> : <Navigate to="/admin/login" />} />
+        <Route path="/shape-quiz-admin" element={isLoggedIn ? <ShapeQuizAdmin /> : <Navigate to="/admin/login" />} />
+        <Route path="/vowel-quiz-admin" element={isLoggedIn ? <VowelQuizAdmin /> : <Navigate to="/admin/login" />} />
+        <Route path="/bodyparts-quiz-admin" element={isLoggedIn ? <BodyPartsQuizAdmin /> : <Navigate to="/admin/login" />} />
+        <Route path="/counting-quiz-admin" element={isLoggedIn ? <CountingQuizAdmin /> : <Navigate to="/admin/login" />} />
       </Routes>
 
     </Router>

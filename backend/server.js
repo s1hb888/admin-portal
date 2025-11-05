@@ -20,6 +20,14 @@ const profileRoutes = require("./routes/profileRoutes");
 const insightRoutes = require("./routes/insightRoutes"); 
 const duaRoutes = require("./routes/duaRoutes");
 const basicQuestionsRoutes = require('./routes/basicQuestions');
+const fruitQuizRoutes = require("./routes/fruitQuizRoutes.js");
+const vowelQuizRoutes = require("./routes/vowelQuizRoutes.js");
+const colorQuizRoutes = require("./routes/colorQuizRoutes.js");
+const shapeQuizRoutes = require("./routes/shapeQuizRoutes.js");
+const vegetableQuizRoutes = require("./routes/vegetableQuizRoutes.js");
+const bodyPartQuizRoutes = require("./routes/bodyPartQuizRoutes.js");
+const countingQuizRoutes = require("./routes/countingQuizRoutes.js");
+
 
 const app = express();
 app.use(cors());
@@ -57,6 +65,15 @@ app.use("/api/videos", fetchRouter);
 app.use("/api/delete-video", deleteRouter);
 app.use("/uploads/videos", express.static(path.join(__dirname, "uploads/videos")));
 app.use("/api/counting", countingRoutes);
+app.use("/api/fruitquiz", fruitQuizRoutes);
+app.use("/api/vowelquiz", vowelQuizRoutes);
+app.use("/api/colorquiz", colorQuizRoutes);
+app.use("/api/shapequiz", shapeQuizRoutes);
+
+app.use("/api/vegetablequiz", vegetableQuizRoutes);
+
+app.use("/api/counting-quiz", countingQuizRoutes);
+app.use("/api/bodypartquiz", bodyPartQuizRoutes);
 app.listen(5000, () => {
   console.log("Server is running on http://localhost:5000");
 });

@@ -17,4 +17,6 @@ const fruitQuizSchema = new mongoose.Schema({
   questions: [questionSchema],
 });
 
-module.exports = mongoose.model("FruitQuiz", fruitQuizSchema);
+// ✅ Safe export (prevents OverwriteModelError)
+module.exports =
+  mongoose.models.FruitQuiz || mongoose.model("FruitQuiz", fruitQuizSchema);

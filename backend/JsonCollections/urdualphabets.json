@@ -1,0 +1,335 @@
+[
+  {
+    "alphabet": "آ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F1-removebg-preview%20(1).png?alt=media&token=0bc3d115-6dc7-486d-b29d-8162dde76255",
+    "word": "آ سے آم",
+    "sound_text": "آ سے آم",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ا",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F2-removebg-preview%20(1).png?alt=media&token=f7ad2591-fb58-4515-88aa-9626a331b774",
+    "word": "ا سے انار",
+    "sound_text": "ا سے انار",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ب",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F3-removebg-preview.png?alt=media&token=02f71062-5139-425e-b894-c459e40ba1a4",
+    "word": "ب سے بلی",
+    "sound_text": "ب سے بلی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "پ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F4-removebg-preview.png?alt=media&token=4efc664d-5706-4056-b6fb-6d68b1479565",
+    "word": "پ سے پنکھا",
+    "sound_text": "پ سے پنکھا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ت",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Flock-removebg-preview.png?alt=media&token=983aa614-6780-4c8c-a2a5-868698ad3d69",
+    "word": "ت سے تَالا",
+    "sound_text": "ت سے تَالا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ٹ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F6-removebg-preview.png?alt=media&token=b2369344-7850-4786-a7ee-b294b19a6901",
+    "word": "ٹ سے ٹوپی",
+    "sound_text": "ٹ سے ٹوپی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ث",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F7-removebg-preview.png?alt=media&token=b9d156cd-4728-4302-a0f3-a51b06bc59a0",
+    "word": "ث سے ثمر",
+    "sound_text": "ث سے ثمر",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ج",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fjuta-removebg-preview.png?alt=media&token=c1a195a7-7707-4035-9d7e-0ce5548baab2",
+    "word": "ج سے جُوتا",
+    "sound_text": "ج سے جُوتا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "چ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F9-removebg-preview.png?alt=media&token=62a8012b-9903-4b1c-99c4-c31e495cd290",
+    "word": "چ سے چابی",
+    "sound_text": "چ سے چابی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ح",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fhalwa.png?alt=media&token=b8dfeda5-0ab2-413f-8702-62e3bfa8a636",
+    "word": "ح سے حلوہ",
+    "sound_text": "ح سے حلوہ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "خ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fkhazana-removebg-preview.png?alt=media&token=d66c48c5-5394-4715-9ad5-042df34754bb",
+    "word": "خ سے خزانہ",
+    "sound_text": "خ سے خزانہ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "د",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F12-removebg-preview.png?alt=media&token=657858f0-1b16-4cb7-8722-1809a7d81e95",
+    "word": "د سے دَوات",
+    "sound_text": "د سے دَوات",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ڈ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F13-removebg-preview.png?alt=media&token=34834dd7-2949-48bd-87b0-26fd35769cf1",
+    "word": "ڈ سے ڈاکٹر",
+    "sound_text": "ڈ سے ڈاکٹر",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ذ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fzakheera-removebg-preview.png?alt=media&token=efc85221-99e3-4b5a-8e83-edc342bdb054",
+    "word": "ذ سے ذخیرہ",
+    "sound_text": "ذ سے ذخیرہ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ر",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Ftain-removebg-preview.png?alt=media&token=868d2149-cc81-4254-a9ce-460453ccb820",
+    "word": "ر سے ریل گاڑی",
+    "sound_text": "ر سے ریل گاڑی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ڑ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F16-removebg-preview.png?alt=media&token=989f3813-87ff-4b93-9a02-68decf635310",
+    "word": "ڑ سے پہاڑ",
+    "sound_text": "ڑ سے پہاڑ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ز",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fzebra-removebg-preview.png?alt=media&token=db0f408e-c375-47b5-bb89-6f9b614ddc45",
+    "word": "ز سے زیبرا",
+    "sound_text": "ز سے زیبرا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ژ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F18-removebg-preview.png?alt=media&token=9bb6ba22-62e0-4c65-b639-dd066487b148",
+    "word": "ژ سے ژالہ باری",
+    "sound_text": "ژ سے ژالہ باری",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "س",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F19-removebg-preview.png?alt=media&token=5aa8b2d6-8a24-4e9b-bf16-798a63cdbe1f",
+    "word": "س سے سورج",
+    "sound_text": "س سے سورج",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ش",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fshaam.PNG?alt=media&token=6d5ed892-6a03-4e34-b8b8-0c56be09ef3d",
+    "word": "ش سے شام",
+    "sound_text": "ش سے شام",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ص",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fsoap-removebg-preview.png?alt=media&token=470d66ce-bf2c-4af4-8993-5aa796bced6c",
+    "word": "ص سے صابن",
+    "sound_text": "ص سے صابن",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ض",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F22-removebg-preview.png?alt=media&token=97f2e8c7-15ee-4539-bc34-fa034e233d79",
+    "word": "ض سے ضعیف",
+    "sound_text": "ض سے ضعیف",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ط",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fparrot-removebg-preview.png?alt=media&token=6d889504-ab3c-4e62-a5b7-9d1a6e1e4a27",
+    "word": "ط سے طوطا",
+    "sound_text": "ط سے طوطا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ظ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fzaroof-removebg-preview.png?alt=media&token=55ae4204-424b-42a7-b4c0-3331dadf9fb8",
+    "word": "ظ سے ظروف",
+    "sound_text": "ظ سے ظروف",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ع",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fglasses-removebg-preview.png?alt=media&token=60dcfe5b-f766-4601-ba70-e2b2f17b8e4c",
+    "word": "ع سے عینک",
+    "sound_text": "ع سے عینک",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "غ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fanger-removebg-preview.png?alt=media&token=fda44ef5-2c91-4656-b0ad-e81fc6af1919",
+    "word": "غ سے غصہ",
+    "sound_text": "غ سے غصہ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ف",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fdove-removebg-preview.png?alt=media&token=8dd8f5cd-9796-4bac-889f-b0802237fc3f",
+    "word": "ف سے فاختہ",
+    "sound_text": "ف سے فاختہ",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ق",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fscissor-removebg-preview.png?alt=media&token=672e6b6c-963d-44a6-8316-3cc1f00c17b2",
+    "word": "ق سے قینچی",
+    "sound_text": "ق سے قینچی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ک",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fpeigon-removebg-preview.png?alt=media&token=bbfec142-d7b0-4669-b2fc-8fcbe6ed66a5",
+    "word": "ک سے کبوتر",
+    "sound_text": "ک سے کبوتر",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "گ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F29-removebg-preview.png?alt=media&token=858ca6cd-4080-4b64-b9cf-c54d28b7ffc6",
+    "word": "گ سے گڑیا",
+    "sound_text": "گ سے گڑیا",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ل",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Flaathi-removebg-preview.png?alt=media&token=ec956ff8-a763-4084-ba0d-e7c936294f62",
+    "word": "ل سے لاٹھی",
+    "sound_text": "ل سے لاٹھی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "م",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Fpeacock-removebg-preview.png?alt=media&token=450b5c5d-a577-4c20-af7c-6541a2a46395",
+    "word": "م سے مور",
+    "sound_text": "م سے مور",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ن",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F32-removebg-preview.png?alt=media&token=1fc86818-88f3-4b9e-b0a9-ccd5d0cf9db9",
+    "word": "ن سے ناریل",
+    "sound_text": "ن سے ناریل",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "و",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2Funiform-removebg-preview.png?alt=media&token=7583b2bd-de7b-4338-b37e-4c2967281d30",
+    "word": "و سے وردی",
+    "sound_text": "و سے وردی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ہ",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F34-removebg-preview.png?alt=media&token=45349e8a-952e-4de9-a7c7-2c74822c7193",
+    "word": "ہ سے ہاتھی",
+    "sound_text": "ہ سے ہاتھی",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ء",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F35-removebg-preview.png?alt=media&token=e1ce0fb8-3b4a-41c2-8249-ce7fc5cc0239",
+    "word": "ء سے گائے",
+    "sound_text": "ء سے گائے",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  },
+  {
+    "alphabet": "ی",
+    "image_url": "https://firebasestorage.googleapis.com/v0/b/funlearm.appspot.com/o/prepPal%2FAlphabets%2FUrdu%2F36-removebg-preview.png?alt=media&token=300bbdf5-d33d-454f-af38-e613d3c0da41",
+    "word": "ی سے یاک",
+    "sound_text": "ی سے یاک",
+    "min_attempts": 3,
+    "min_time_avg": 2.0,
+    "min_correct_avg": 80
+  }
+]
