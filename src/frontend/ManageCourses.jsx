@@ -43,18 +43,7 @@ const ManageCourses = () => {
         position: 'relative'
       }}>
         {/* Decorative Background Elements */}
-        <div style={{
-          position: 'absolute',
-          top: '-20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '1rem',
-          opacity: 0.1,
-          zIndex: 0
-        }}>
-         
-        </div>
+       
 
         {/* Icon Badge */}
         <div style={{
@@ -207,17 +196,7 @@ const ManageCourses = () => {
               </div>
 
               {/* Decorative gradient overlay on hover */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: '150px',
-                height: '150px',
-                background: `radial-gradient(circle at center, ${card.color}15, transparent)`,
-                opacity: hoveredCard === i ? 1 : 0,
-                transition: 'opacity 0.3s ease',
-                pointerEvents: 'none'
-              }} />
+              
             </div>
           </div>
         ))}

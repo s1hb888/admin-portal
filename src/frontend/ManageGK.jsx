@@ -77,18 +77,7 @@ const ManageGK = () => {
         textAlign: 'center',
         position: 'relative'
       }}>
-        {/* Decorative Background Elements */}
-        <div style={{
-          position: 'absolute',
-          top: '-20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '1rem',
-          opacity: 0.08,
-          zIndex: 0
-        }}>
-        </div>
+      
 
         {/* Icon Badge */}
         <div style={{
@@ -179,21 +168,7 @@ const ManageGK = () => {
                 background: `linear-gradient(90deg, ${card.color}, ${card.color}DD)`,
               }} />
 
-              {/* Background Pattern */}
-              <div style={{
-                position: 'absolute',
-                top: '20px',
-                right: '20px',
-                fontSize: '80px',
-                fontWeight: '900',
-                color: `${card.color}10`,
-                opacity: hoveredCard === i ? 0.2 : 0.15,
-                transition: 'opacity 0.3s ease',
-                userSelect: 'none',
-                pointerEvents: 'none'
-              }}>
-                {card.bgPattern}
-              </div>
+             
 
               <div style={{ padding: '2.5rem' }}>
                 {/* Icon Container */}
@@ -260,17 +235,7 @@ const ManageGK = () => {
               </div>
 
               {/* Decorative gradient overlay on hover */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: '150px',
-                height: '150px',
-                background: `radial-gradient(circle at center, ${card.color}15, transparent)`,
-                opacity: hoveredCard === i ? 1 : 0,
-                transition: 'opacity 0.3s ease',
-                pointerEvents: 'none'
-              }} />
+             
             </div>
           </div>
         ))}

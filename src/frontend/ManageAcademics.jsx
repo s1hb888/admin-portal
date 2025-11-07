@@ -130,10 +130,10 @@ const ManageAcademics = () => {
                 borderRadius: '16px',
                 cursor: 'pointer',
                 backgroundColor: '#fff',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.3s cubic-bezier(1, 0, 0.2, 1)',
                 transform: hoveredCard === i ? 'translateY(-8px)' : 'translateY(0)',
                 boxShadow: hoveredCard === i 
-                  ? '0 20px 40px rgba(0,0,0,0.12)' 
+                  ? '0 2px 40px rgba(0,0,0,0.12)' 
                   : '0 2px 8px rgba(0,0,0,0.08)',
                 overflow: 'hidden',
                 position: 'relative',
@@ -159,12 +159,12 @@ const ManageAcademics = () => {
                 fontSize: '80px',
                 fontWeight: '900',
                 color: `${card.color}10`,
-                opacity: hoveredCard === i ? 0.2 : 0.15,
+                opacity: 1,
                 transition: 'opacity 0.3s ease',
                 userSelect: 'none',
                 pointerEvents: 'none'
               }}>
-                {card.bgPattern}
+                
               </div>
 
               <div style={{ padding: '2.5rem' }}>
@@ -230,19 +230,6 @@ const ManageAcademics = () => {
                   />
                 </div>
               </div>
-
-              {/* Decorative gradient overlay on hover */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: '150px',
-                height: '150px',
-                background: `radial-gradient(circle at center, ${card.color}15, transparent)`,
-                opacity: hoveredCard === i ? 1 : 0,
-                transition: 'opacity 0.3s ease',
-                pointerEvents: 'none'
-              }} />
             </div>
           </div>
         ))}
