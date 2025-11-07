@@ -53,9 +53,7 @@ const ManageCourses = () => {
           opacity: 0.1,
           zIndex: 0
         }}>
-          <FaGraduationCap size={80} color={green} />
-          <FaChartLine size={80} color={red} />
-          <FaUsers size={80} color={yellow} />
+         
         </div>
 
         {/* Icon Badge */}

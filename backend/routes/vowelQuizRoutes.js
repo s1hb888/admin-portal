@@ -15,23 +15,21 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ Add new vowel quiz question
-router.post("/", async (req, res) => {
-  const { quiz_title, question, correct_answer } = req.body;
-
+// Add a question to an existing quiz
+router.post("/:quizId/questions", async (req, res) => {
   try {
-    let quiz = await VowelQuiz.findOne({ quiz_title });
-    if (!quiz) {
-      quiz = new VowelQuiz({ quiz_title, questions: [] });
-    }
+    const quiz = await VowelQuiz.findById(req.params.quizId);
+    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
 
-    quiz.questions.push({ question, correct_answer });
+    quiz.questions.push(req.body);
     await quiz.save();
 
-    res.json({ message: "Question added successfully", quiz });
+    res.status(201).json(quiz);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 });
+
 
 // ✅ Update question
 router.put("/:quizId/:questionId", async (req, res) => {

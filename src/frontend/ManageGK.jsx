@@ -88,9 +88,6 @@ const ManageGK = () => {
           opacity: 0.08,
           zIndex: 0
         }}>
-          <FaGraduationCap size={80} color={green} />
-          <FaBook size={80} color={red} />
-          <FaAppleAlt size={80} color={yellow} />
         </div>
 
         {/* Icon Badge */}

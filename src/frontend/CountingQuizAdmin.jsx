@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Form, Alert } from "react-bootstrap";
+import { Card, Button, Form, Alert, Modal } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:5000/api/counting-quiz";
@@ -19,8 +19,8 @@ const CountingQuizAdmin = () => {
   const [answer, setAnswer] = useState("");
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  // ✅ Fetch quiz data
   useEffect(() => {
     fetchQuizData();
   }, []);
@@ -34,14 +34,12 @@ const CountingQuizAdmin = () => {
     }
   };
 
-  // ✅ Handle image change
   const handleImageChange = (index, value) => {
     const updated = [...images];
     updated[index] = value;
     setImages(updated);
   };
 
-  // ✅ Validate fields
   const validateFields = () => {
     if (!question.trim()) return "Please enter a question.";
     if (images.some((img) => !img.trim())) return "Please add all 3 image URLs.";
@@ -49,7 +47,6 @@ const CountingQuizAdmin = () => {
     return null;
   };
 
-  // ✅ Reset form
   const resetForm = () => {
     setQuestion("");
     setImages(["", "", ""]);
@@ -58,7 +55,6 @@ const CountingQuizAdmin = () => {
     setError("");
   };
 
-  // ✅ Add question
   const handleAdd = async () => {
     const validationError = validateFields();
     if (validationError) {
@@ -77,7 +73,6 @@ const CountingQuizAdmin = () => {
     }
   };
 
-  // ✅ Update question
   const handleUpdate = async () => {
     if (!editing) return;
     const validationError = validateFields();
@@ -85,7 +80,6 @@ const CountingQuizAdmin = () => {
       setError(validationError);
       return;
     }
-    setError("");
     if (!window.confirm("Are you sure you want to update this question?")) return;
     try {
       await axios.put(`${API_URL}/${editing.quizId}/${editing.questionId}`, {
@@ -96,12 +90,12 @@ const CountingQuizAdmin = () => {
       alert("✅ Question updated successfully!");
       fetchQuizData();
       resetForm();
+      setShowEditModal(false);
     } catch (err) {
       alert("❌ Failed to update question!");
     }
   };
 
-  // ✅ Delete question
   const handleDelete = async (quizId, questionId) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
     try {
@@ -113,12 +107,12 @@ const CountingQuizAdmin = () => {
     }
   };
 
-  // ✅ Edit mode
   const handleEdit = (quizId, q) => {
     setEditing({ quizId, questionId: q._id });
     setQuestion(q.question);
-    setImages(q.images);
+    setImages(q.images.map((img) => img.url || img));
     setAnswer(q.answer);
+    setShowEditModal(true); // ✅ Open popup modal
   };
 
   return (
@@ -144,7 +138,7 @@ const CountingQuizAdmin = () => {
         Counting Quiz Management
       </h2>
 
-      {/* 🔹 Add/Edit Form */}
+      {/* 🔹 Add Form */}
       <Card
         className="p-4 shadow-sm mb-5"
         style={{
@@ -160,7 +154,6 @@ const CountingQuizAdmin = () => {
             </Alert>
           )}
 
-          {/* Question */}
           <Form.Group className="mb-4">
             <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>
               Question
@@ -173,7 +166,6 @@ const CountingQuizAdmin = () => {
             />
           </Form.Group>
 
-          {/* Images */}
           <h5 style={{ marginBottom: "15px", color: textDark }}>Image Options (3)</h5>
           {images.map((img, index) => (
             <div key={index} className="d-flex gap-3 mb-3 align-items-center flex-wrap">
@@ -200,7 +192,6 @@ const CountingQuizAdmin = () => {
             </div>
           ))}
 
-          {/* Correct Answer */}
           <Form.Group className="mb-4">
             <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>
               Correct Answer
@@ -213,42 +204,22 @@ const CountingQuizAdmin = () => {
             />
           </Form.Group>
 
-          {/* Buttons */}
-          {editing ? (
-            <Button
-              onClick={handleUpdate}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaEdit /> Update
-            </Button>
-          ) : (
-            <Button
-              onClick={handleAdd}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaPlus /> Add
-            </Button>
-          )}
+          <Button
+            onClick={handleAdd}
+            style={{
+              backgroundColor: green,
+              color: "#fff",
+              fontWeight: "600",
+              padding: "10px 20px",
+              fontSize: "1.1rem",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FaPlus /> Add
+          </Button>
         </Form>
       </Card>
 
@@ -272,10 +243,9 @@ const CountingQuizAdmin = () => {
                 <h5 style={{ fontWeight: "600" }}>{q.question}</h5>
                 <div className="d-flex flex-wrap gap-4 mt-3">
                   {q.images.map((img, i) => (
-                    
                     <img
                       key={i}
-                      src={img.url}
+                      src={img.url || img}
                       alt={`Option ${i + 1}`}
                       width="80"
                       height="80"
@@ -322,9 +292,88 @@ const CountingQuizAdmin = () => {
           )
         )}
       </div>
+
+      {/* ✅ Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Header closeButton style={{ backgroundColor: green, color: "#fff" }}>
+          <Modal.Title>Edit Counting Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" style={{ fontWeight: "600", fontSize: "1rem" }}>
+              {error}
+            </Alert>
+          )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Edit question"
+              />
+            </Form.Group>
+
+            <h5>Image Options (3)</h5>
+            {images.map((img, index) => (
+              <div key={index} className="d-flex gap-3 mb-3 align-items-center flex-wrap">
+                <Form.Control
+                  value={img}
+                  onChange={(e) => handleImageChange(index, e.target.value)}
+                  placeholder={`Edit Image URL ${index + 1}`}
+                />
+                {img && (
+                  <img
+                    src={img}
+                    alt={`Preview ${index + 1}`}
+                    width="80"
+                    height="80"
+                    style={{
+                      borderRadius: "10px",
+                      border: `2px solid ${yellow}`,
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+
+            <Form.Group className="mb-3">
+              <Form.Label>Correct Answer</Form.Label>
+              <Form.Control
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Edit correct number"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowEditModal(false)}
+            style={{
+              backgroundColor: red,
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            style={{
+              backgroundColor: yellow,
+              border: "none",
+              fontWeight: "600",
+              color: "#000",
+            }}
+            onClick={handleUpdate}
+          >
+            <FaEdit /> Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
 export default CountingQuizAdmin;
-

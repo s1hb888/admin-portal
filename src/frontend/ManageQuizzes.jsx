@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Form } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 
 import FruitQuizAdmin from "./FruitQuizAdmin";
 import VegetableQuizAdmin from "./VegetableQuizAdmin";
@@ -71,53 +71,44 @@ const ManageQuizzes = () => {
         Quiz Management Dashboard
       </h2>
 
-      {/* Dropdown Card */}
-      <Card
-        className="p-4 shadow-sm mb-4"
+      {/* Options as Cards */}
+      <div
         style={{
-          borderRadius: "14px",
-          borderLeft: `8px solid ${green}`,
-          backgroundColor: "#fff",
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)", // 4 cards per row
+          gap: "1.5rem",
+          marginBottom: "2rem",
         }}
       >
-        <Form.Group>
-          <Form.Label
+        {categories.map((cat, idx) => (
+          <div
+            key={idx}
+            onClick={() => setSelectedCategory(cat)}
             style={{
-              fontWeight: "bold",
-              color: textDark,
-              fontSize: "1.4rem",
-              marginBottom: "12px",
-            }}
-          >
-            Select Quiz Category
-          </Form.Label>
-
-          <Form.Select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            style={{
-              borderRadius: "12px",
-              border: `2px solid ${yellow}`,
-              padding: "14px",
-              fontWeight: "500",
-              fontSize: "1.2rem",
-              color: textDark,
-              backgroundColor: "#fff",
-              transition: "border 0.3s, box-shadow 0.3s",
+              borderRadius: "16px",
+              padding: "1.5rem",
+              backgroundColor: selectedCategory === cat ? green : "#fff",
+              color: selectedCategory === cat ? "#fff" : textDark,
+              fontWeight: "600",
+              fontSize: "1.1rem",
               cursor: "pointer",
+              textAlign: "center",
+              boxShadow:
+                selectedCategory === cat
+                  ? "0 10px 20px rgba(0,0,0,0.15)"
+                  : "0 2px 8px rgba(0,0,0,0.08)",
+              transition: "all 0.3s ease",
             }}
-            onFocus={(e) => (e.target.style.boxShadow = `0 0 10px ${green}`)}
-            onBlur={(e) => (e.target.style.boxShadow = "none")}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = green)}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                selectedCategory === cat ? green : "#fff")
+            }
           >
-            <option value="">-- Choose Category --</option>
-            {categories.map((cat, idx) => (
-              <option key={idx} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
-      </Card>
+            {cat}
+          </div>
+        ))}
+      </div>
 
       {/* Render Quiz Card */}
       {selectedCategory && (
@@ -138,4 +129,3 @@ const ManageQuizzes = () => {
 };
 
 export default ManageQuizzes;
-

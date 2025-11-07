@@ -1,19 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const urduSchema = new mongoose.Schema({
-  alphabet: {
-    type: String,
-  },
-  image_url: {
-    type: String,
-  },
-  word: {
-    type: String,
-  },
-  sound_text: {
-    type: String,
-
-  }
+  alphabet: { type: String, required: true },
+  image_url: { type: String, required: true },
+  word: { type: String, required: true },
+  sound_text: { type: String, required: true },
+  min_attempts: { type: Number, required: true, default: 3 },
+  min_time_avg: { type: Number, required: true, default: 2.0 },
+  min_correct_avg: { type: Number, required: true, default: 80 },
 });
 
-module.exports = mongoose.model('urdu_alphabet', urduSchema);
+module.exports = mongoose.model("urdu_alphabet", urduSchema);

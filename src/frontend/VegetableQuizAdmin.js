@@ -1,7 +1,6 @@
-// ✅ VegetableQuizAdmin.js (Final Fixed Version)
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Form, Alert } from "react-bootstrap";
+import { Card, Button, Form, Alert, Modal } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:5000/api/vegetablequiz";
@@ -20,6 +19,7 @@ const VegetableQuizAdmin = () => {
   const [winner, setWinner] = useState("");
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchQuizData();
@@ -37,9 +37,17 @@ const VegetableQuizAdmin = () => {
   const validateFields = () => {
     if (!question.trim()) return "Please enter a question.";
     if (!option.word.trim() || !option.image_url.trim())
-      return "Please fill both name and image URL.";
+      return "Please fill both vegetable name and image URL.";
     if (!winner.trim()) return "Please enter the correct vegetable name.";
     return null;
+  };
+
+  const resetForm = () => {
+    setQuestion("");
+    setOption({ word: "", image_url: "" });
+    setWinner("");
+    setError("");
+    setEditing(null);
   };
 
   const handleAdd = async () => {
@@ -68,17 +76,19 @@ const VegetableQuizAdmin = () => {
     }
   };
 
-  const handleEdit = async (quizId, questionId) => {
+  const handleUpdate = async () => {
     const validationError = validateFields();
     if (validationError) {
       setError(validationError);
       return;
     }
     setError("");
+    if (!editing) return;
+
     if (!window.confirm("Are you sure you want to update this question?")) return;
 
     try {
-      await axios.put(`${API_URL}/${quizId}/${questionId}`, {
+      await axios.put(`${API_URL}/${editing.quizId}/${editing.questionId}`, {
         question,
         options: option,
         winner,
@@ -86,7 +96,7 @@ const VegetableQuizAdmin = () => {
       alert("✅ Question updated successfully!");
       fetchQuizData();
       resetForm();
-      setEditing(null);
+      setShowEditModal(false);
     } catch (err) {
       console.error("Error updating question:", err);
       alert("❌ Failed to update question!");
@@ -105,11 +115,12 @@ const VegetableQuizAdmin = () => {
     }
   };
 
-  const resetForm = () => {
-    setQuestion("");
-    setOption({ word: "", image_url: "" });
-    setWinner("");
-    setError("");
+  const handleEditClick = (quizId, q) => {
+    setQuestion(q.question);
+    setOption(q.options || { word: "", image_url: "" });
+    setWinner(q.winner);
+    setEditing({ quizId, questionId: q._id });
+    setShowEditModal(true);
   };
 
   return (
@@ -135,7 +146,7 @@ const VegetableQuizAdmin = () => {
         Vegetable Quiz Management
       </h2>
 
-      {/* ✅ Add / Edit Form */}
+      {/* ✅ Add Form */}
       <Card
         className="p-4 shadow-sm mb-5"
         style={{
@@ -152,9 +163,7 @@ const VegetableQuizAdmin = () => {
           )}
 
           <Form.Group className="mb-4">
-            <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>
-              Question
-            </Form.Label>
+            <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>Question</Form.Label>
             <Form.Control
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -163,9 +172,7 @@ const VegetableQuizAdmin = () => {
             />
           </Form.Group>
 
-          <h5 style={{ marginBottom: "15px", color: textDark }}>
-            Vegetable Name + Image
-          </h5>
+          <h5 style={{ marginBottom: "15px", color: textDark }}>Vegetable Name + Image</h5>
 
           <div className="d-flex gap-3 mb-3 align-items-center flex-wrap">
             <Form.Control
@@ -197,9 +204,7 @@ const VegetableQuizAdmin = () => {
           </div>
 
           <Form.Group className="mb-4">
-            <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>
-              Correct Vegetable
-            </Form.Label>
+            <Form.Label style={{ fontWeight: "600", fontSize: "1.2rem" }}>Correct Vegetable</Form.Label>
             <Form.Control
               value={winner}
               onChange={(e) => setWinner(e.target.value)}
@@ -208,41 +213,22 @@ const VegetableQuizAdmin = () => {
             />
           </Form.Group>
 
-          {editing ? (
-            <Button
-              onClick={() => handleEdit(editing.quizId, editing.questionId)}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaEdit /> Update
-            </Button>
-          ) : (
-            <Button
-              onClick={handleAdd}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaPlus /> Add
-            </Button>
-          )}
+          <Button
+            onClick={handleAdd}
+            style={{
+              backgroundColor: green,
+              color: "#fff",
+              fontWeight: "600",
+              padding: "10px 20px",
+              fontSize: "1.1rem",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FaPlus /> Add
+          </Button>
         </Form>
       </Card>
 
@@ -265,7 +251,6 @@ const VegetableQuizAdmin = () => {
               >
                 <h5 style={{ fontWeight: "600" }}>{q.question}</h5>
 
-                {/* ✅ Single Option */}
                 <div className="text-center mt-3">
                   <img
                     src={q.options?.image_url}
@@ -279,9 +264,7 @@ const VegetableQuizAdmin = () => {
                       boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
                     }}
                   />
-                  <p style={{ marginTop: "5px", fontWeight: "500" }}>
-                    {q.options?.word}
-                  </p>
+                  <p style={{ marginTop: "5px", fontWeight: "500" }}>{q.options?.word}</p>
                 </div>
 
                 <p style={{ marginTop: "10px", fontWeight: "600" }}>
@@ -291,31 +274,15 @@ const VegetableQuizAdmin = () => {
                 <div className="d-flex gap-3 mt-3">
                   <Button
                     variant="warning"
-                    onClick={() => {
-                      setQuestion(q.question);
-                      setOption(q.options || { word: "", image_url: "" });
-                      setWinner(q.winner);
-                      setEditing({ quizId: quiz._id, questionId: q._id });
-                    }}
-                    style={{
-                      fontWeight: "600",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
+                    onClick={() => handleEditClick(quiz._id, q)}
+                    style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}
                   >
                     <FaEdit /> Edit
                   </Button>
-
                   <Button
                     variant="danger"
                     onClick={() => handleDelete(quiz._id, q._id)}
-                    style={{
-                      fontWeight: "600",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
+                    style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}
                   >
                     <FaTrash /> Delete
                   </Button>
@@ -325,6 +292,79 @@ const VegetableQuizAdmin = () => {
           )
         )}
       </div>
+
+      {/* 🟡 Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Header closeButton style={{ backgroundColor: green, color: "#fff" }}>
+          <Modal.Title>Edit Vegetable Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" style={{ fontWeight: "600", fontSize: "1rem" }}>
+              {error}
+            </Alert>
+          )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Edit question"
+              />
+            </Form.Group>
+
+            <h6>Vegetable Name + Image</h6>
+            <Form.Group className="mb-2">
+              <Form.Control
+                value={option.word}
+                onChange={(e) => setOption({ ...option, word: e.target.value })}
+                placeholder="Vegetable Name"
+              />
+            </Form.Group>
+            <Form.Group className="mb-2">
+              <Form.Control
+                value={option.image_url}
+                onChange={(e) => setOption({ ...option, image_url: e.target.value })}
+                placeholder="Image URL"
+              />
+              {option.image_url && (
+                <img
+                  src={option.image_url}
+                  alt="veg preview"
+                  width="100"
+                  height="100"
+                  className="mt-2"
+                  style={{ borderRadius: "10px", border: `2px solid ${yellow}` }}
+                />
+              )}
+            </Form.Group>
+
+            <Form.Group className="mb-2">
+              <Form.Label>Correct Vegetable</Form.Label>
+              <Form.Control
+                value={winner}
+                onChange={(e) => setWinner(e.target.value)}
+                placeholder="Enter correct vegetable"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowEditModal(false)}
+            style={{ backgroundColor: red, border: "none", fontWeight: "600" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdate}
+            style={{ backgroundColor: yellow, border: "none", fontWeight: "600", color: "#000" }}
+          >
+            <FaEdit /> Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

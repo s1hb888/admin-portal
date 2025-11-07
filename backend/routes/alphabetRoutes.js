@@ -1,5 +1,5 @@
 const express = require("express");
-const Alphabet = require("../models/Alphabet"); // ✅ no .js needed in CJS
+const Alphabet = require("../models/Alphabet");
 
 const router = express.Router();
 
@@ -38,7 +38,10 @@ router.get("/:id", async (req, res) => {
 // UPDATE
 router.put("/:id", async (req, res) => {
   try {
-    const updated = await Alphabet.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updated = await Alphabet.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
     res.json(updated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -55,4 +58,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router; // ✅ CommonJS export
+module.exports = router;

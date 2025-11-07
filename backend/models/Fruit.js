@@ -1,20 +1,20 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const optionSchema = new mongoose.Schema({
-  word: String,
-  image_url: String,
-  sound_text: String,
+const fruitSchema = new mongoose.Schema({
+word: {
+    type: String,
+  },
+  image_url: {
+    type: String,
+  },
+  sound_text: {
+    type: String,
+
+
+
+  }
+
+
 });
 
-const questionSchema = new mongoose.Schema({
-  question: String,
-  options: [optionSchema],
-  winner: String,
-});
-
-const fruitQuizSchema = new mongoose.Schema({
-  quiz_title: { type: String, required: true },
-  questions: [questionSchema],
-});
-
-module.exports = mongoose.model("FruitQuiz", fruitQuizSchema);
+module.exports = mongoose.model('fruit', fruitSchema);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Form, Alert } from "react-bootstrap";
+import { Card, Button, Form, Alert, Modal } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:5000/api/fruitquiz";
@@ -24,6 +24,7 @@ const FruitQuizAdmin = () => {
   const [winner, setWinner] = useState("");
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchQuizData();
@@ -53,45 +54,42 @@ const FruitQuizAdmin = () => {
   };
 
   const handleAdd = async () => {
-  const validationError = validateFields();
-  if (validationError) {
-    setError(validationError);
-    return;
-  }
-
-  const newQuestion = {
-    question,
-    options,
-    winner,
-  };
-
-  try {
-    await axios.post(API_URL, {
-      quiz_title: "Fruit Quiz",
-      questions: [newQuestion],
-    });
-
-    alert("✅ Question added successfully!");
-    fetchQuizData();
-    resetForm();
-  } catch (err) {
-    console.error("❌ Error adding question:", err.response?.data || err.message);
-    alert("Failed to add question!");
-  }
-};
-
-  const handleEdit = async (quizId, questionId) => {
     const validationError = validateFields();
     if (validationError) {
       setError(validationError);
       return;
     }
-    setError("");
 
-    if (!window.confirm("Are you sure you want to update this question?")) return;
+    const newQuestion = { question, options, winner };
 
     try {
-      await axios.put(`${API_URL}/${quizId}/${questionId}`, {
+      await axios.post(API_URL, {
+        quiz_title: quizTitle,
+        questions: [newQuestion],
+      });
+      alert("✅ Question added successfully!");
+      fetchQuizData();
+      resetForm();
+    } catch (err) {
+      console.error("❌ Error adding question:", err.response?.data || err.message);
+      alert("Failed to add question!");
+    }
+  };
+
+  const handleUpdate = async () => {
+    const validationError = validateFields();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    if (!editing) {
+      alert("No question selected for editing!");
+      return;
+    }
+
+    try {
+      await axios.put(`${API_URL}/${editing.quizId}/${editing.questionId}`, {
         question,
         options,
         winner,
@@ -100,6 +98,7 @@ const FruitQuizAdmin = () => {
       fetchQuizData();
       resetForm();
       setEditing(null);
+      setShowEditModal(false);
     } catch (err) {
       console.error("Error updating question:", err);
       alert("❌ Failed to update question!");
@@ -116,6 +115,14 @@ const FruitQuizAdmin = () => {
       console.error("Error deleting question:", err);
       alert("❌ Failed to delete question!");
     }
+  };
+
+  const handleEditClick = (quizId, q) => {
+    setQuestion(q.question);
+    setOptions(q.options);
+    setWinner(q.winner);
+    setEditing({ quizId, questionId: q._id });
+    setShowEditModal(true);
   };
 
   const resetForm = () => {
@@ -153,6 +160,7 @@ const FruitQuizAdmin = () => {
         Fruit Quiz Management
       </h2>
 
+      {/* Add Form */}
       <Card
         className="p-4 shadow-sm mb-5"
         style={{
@@ -226,45 +234,26 @@ const FruitQuizAdmin = () => {
             />
           </Form.Group>
 
-          {editing ? (
-            <Button
-              onClick={() => handleEdit(editing.quizId, editing.questionId)}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaEdit /> Update
-            </Button>
-          ) : (
-            <Button
-              onClick={handleAdd}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaPlus /> Add
-            </Button>
-          )}
+          <Button
+            onClick={handleAdd}
+            style={{
+              backgroundColor: green,
+              color: "#fff",
+              fontWeight: "600",
+              padding: "10px 20px",
+              fontSize: "1.1rem",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FaPlus /> Add
+          </Button>
         </Form>
       </Card>
 
-      {/* Existing Questions Section */}
+      {/* Existing Questions */}
       <div className="mb-5">
         <h4 style={{ marginBottom: "20px", color: textDark }}>Existing Questions</h4>
         {quizData.length === 0 ? (
@@ -307,12 +296,7 @@ const FruitQuizAdmin = () => {
                 <div className="d-flex gap-3 mt-3">
                   <Button
                     variant="warning"
-                    onClick={() => {
-                      setQuestion(q.question);
-                      setOptions(q.options);
-                      setWinner(q.winner);
-                      setEditing({ quizId: quiz._id, questionId: q._id });
-                    }}
+                    onClick={() => handleEditClick(quiz._id, q)}
                     style={{
                       fontWeight: "600",
                       display: "flex",
@@ -340,10 +324,96 @@ const FruitQuizAdmin = () => {
           )
         )}
       </div>
+
+      {/* ✅ Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered size="lg">
+        <Modal.Header closeButton style={{ backgroundColor: green, color: "#fff" }}>
+          <Modal.Title>Edit Fruit Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" style={{ fontWeight: "600", fontSize: "1rem" }}>
+              {error}
+            </Alert>
+          )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </Form.Group>
+
+            <h5 style={{ marginBottom: "15px", color: textDark }}>
+              Options (Edit Word + Image URL)
+            </h5>
+            {options.map((opt, index) => (
+              <div key={index} className="d-flex gap-3 mb-3 align-items-center flex-wrap">
+                <Form.Control
+                  placeholder="Word"
+                  value={opt.word}
+                  onChange={(e) => handleOptionChange(index, "word", e.target.value)}
+                  style={{ flex: "1", minWidth: "150px" }}
+                />
+                <Form.Control
+                  placeholder="Image URL"
+                  value={opt.image_url}
+                  onChange={(e) => handleOptionChange(index, "image_url", e.target.value)}
+                  style={{ flex: "2", minWidth: "200px" }}
+                />
+                {opt.image_url && (
+                  <img
+                    src={opt.image_url}
+                    alt="fruit"
+                    width="60"
+                    height="60"
+                    style={{
+                      borderRadius: "8px",
+                      objectFit: "cover",
+                      border: `2px solid ${yellow}`,
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+
+            <Form.Group className="mb-3">
+              <Form.Label>Winner Fruit</Form.Label>
+              <Form.Control
+                value={winner}
+                onChange={(e) => setWinner(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowEditModal(false)}
+            style={{
+              backgroundColor: red,
+              border: "none",
+              fontWeight: "600",
+              color: "#fff",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdate}
+            style={{
+              backgroundColor: yellow,
+              border: "none",
+              fontWeight: "600",
+              color: "#000",
+            }}
+          >
+            <FaEdit /> Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
 export default FruitQuizAdmin;
-
-

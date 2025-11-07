@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Form, Alert } from "react-bootstrap";
+import { Card, Button, Form, Alert, Modal } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:5000/api/shapequiz";
@@ -20,6 +20,7 @@ const ShapeQuizAdmin = () => {
   const [hints, setHints] = useState(["", ""]);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchQuizData();
@@ -67,17 +68,22 @@ const ShapeQuizAdmin = () => {
     }
   };
 
-  const handleEdit = async (quizId, questionId) => {
+  const handleUpdate = async () => {
     const validationError = validateFields();
     if (validationError) {
       setError(validationError);
       return;
     }
-    setError("");
-    if (!window.confirm("Are you sure you want to update this question?")) return;
+
+    if (!editing) {
+      alert("No question selected for editing!");
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to update this shape question?")) return;
 
     try {
-      await axios.put(`${API_URL}/${quizId}/${questionId}`, {
+      await axios.put(`${API_URL}/${editing.quizId}/${editing.questionId}`, {
         shapeName,
         imageUrl,
         hints: hints.map((text) => ({ text })),
@@ -86,6 +92,7 @@ const ShapeQuizAdmin = () => {
       fetchQuizData();
       resetForm();
       setEditing(null);
+      setShowEditModal(false);
     } catch (err) {
       console.error("Error updating question:", err);
       alert("❌ Failed to update question!");
@@ -104,12 +111,19 @@ const ShapeQuizAdmin = () => {
     }
   };
 
+  const handleEditClick = (quizId, q) => {
+    setShapeName(q.shapeName);
+    setImageUrl(q.imageUrl);
+    setHints(q.hints.map((h) => h.text));
+    setEditing({ quizId, questionId: q._id });
+    setShowEditModal(true);
+  };
+
   const resetForm = () => {
     setShapeName("");
     setImageUrl("");
     setHints(["", ""]);
     setError("");
-    setEditing(null);
   };
 
   const handleHintChange = (index, value) => {
@@ -175,6 +189,21 @@ const ShapeQuizAdmin = () => {
             />
           </Form.Group>
 
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Shape Preview"
+              width="100"
+              height="100"
+              style={{
+                marginTop: "10px",
+                borderRadius: "10px",
+                border: `2px solid ${yellow}`,
+                objectFit: "cover",
+              }}
+            />
+          )}
+
           <h5 style={{ marginBottom: "10px", color: textDark }}>Hints</h5>
           {hints.map((hint, index) => (
             <Form.Group key={index} className="mb-2">
@@ -186,21 +215,19 @@ const ShapeQuizAdmin = () => {
             </Form.Group>
           ))}
 
-          {editing ? (
-            <Button
-              onClick={() => handleEdit(editing.quizId, editing.questionId)}
-              style={{ backgroundColor: green, color: "#fff", fontWeight: "600" }}
-            >
-              <FaEdit /> Update
-            </Button>
-          ) : (
-            <Button
-              onClick={handleAdd}
-              style={{ backgroundColor: green, color: "#fff", fontWeight: "600" }}
-            >
-              <FaPlus /> Add
-            </Button>
-          )}
+          <Button
+            onClick={handleAdd}
+            style={{
+              backgroundColor: green,
+              color: "#fff",
+              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FaPlus /> Add
+          </Button>
         </Form>
       </Card>
 
@@ -254,12 +281,7 @@ const ShapeQuizAdmin = () => {
                 <div className="d-flex gap-2 mt-3">
                   <Button
                     variant="warning"
-                    onClick={() => {
-                      setShapeName(q.shapeName);
-                      setImageUrl(q.imageUrl);
-                      setHints(q.hints.map((h) => h.text));
-                      setEditing({ quizId: quiz._id, questionId: q._id });
-                    }}
+                    onClick={() => handleEditClick(quiz._id, q)}
                   >
                     <FaEdit /> Edit
                   </Button>
@@ -275,6 +297,83 @@ const ShapeQuizAdmin = () => {
           )
         )}
       </div>
+
+      {/* 🟡 Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Header closeButton style={{ backgroundColor: green, color: "#fff" }}>
+          <Modal.Title>Edit Shape Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" style={{ fontWeight: "600", fontSize: "1rem" }}>
+              {error}
+            </Alert>
+          )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Shape Name</Form.Label>
+              <Form.Control
+                value={shapeName}
+                onChange={(e) => setShapeName(e.target.value)}
+                placeholder="Edit shape name"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Image URL</Form.Label>
+              <Form.Control
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Edit image URL"
+              />
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  width="100"
+                  height="100"
+                  className="mt-2"
+                  style={{ borderRadius: "10px", border: `2px solid ${yellow}` }}
+                />
+              )}
+            </Form.Group>
+
+            <h6>Hints</h6>
+            {hints.map((hint, i) => (
+              <Form.Group key={i} className="mb-2">
+                <Form.Control
+                  value={hint}
+                  onChange={(e) => handleHintChange(i, e.target.value)}
+                  placeholder={`Hint ${i + 1}`}
+                />
+              </Form.Group>
+            ))}
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowEditModal(false)}
+            style={{
+              backgroundColor: red,
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            style={{
+              backgroundColor: yellow,
+              border: "none",
+              fontWeight: "600",
+              color: "#000",
+            }}
+            onClick={handleUpdate}
+          >
+            <FaEdit /> Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

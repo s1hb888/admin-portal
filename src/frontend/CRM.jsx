@@ -44,7 +44,7 @@ const CRM = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [availableCities, setAvailableCities] = useState([]);
 
-  const ageColors = [red, themeGreen, themeYellow, "#4A90E2", "#FF6F61"];
+  const ageColors = [themeGreen, red, themeYellow, "#4A90E2", "#FF6F61"];
 
   useEffect(() => {
     fetchData();
@@ -467,7 +467,7 @@ const CRM = () => {
                       gap: '6px',
                       padding: '6px 12px',
                       backgroundColor: 'transparent',
-                      color: red,
+                      color: themeGreen,
                       border: 'none',
                       cursor: 'pointer',
                       fontSize: '14px',
@@ -608,7 +608,7 @@ const CRM = () => {
                 width: '60px',
                 height: '60px',
                 borderRadius: '50%',
-                backgroundColor: red,
+                backgroundColor: themeGreen,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -639,7 +639,7 @@ const CRM = () => {
                 width: '60px',
                 height: '60px',
                 borderRadius: '50%',
-                backgroundColor: themeGreen,
+                backgroundColor: red,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -701,7 +701,7 @@ const CRM = () => {
                   <XAxis dataKey="city" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
                   <Tooltip />
-                  <Bar dataKey="users" fill={red} radius={[5, 5, 0, 0]} barSize={30} />
+                  <Bar dataKey="users" fill={themeGreen} radius={[5, 5, 0, 0]} barSize={30} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

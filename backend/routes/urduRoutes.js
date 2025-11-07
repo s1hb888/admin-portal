@@ -1,5 +1,5 @@
 const express = require("express");
-const Urdu = require("../models/Urdu"); // ✅ no .js needed in CJS
+const Urdu = require("../models/Urdu");
 
 const router = express.Router();
 
@@ -55,4 +55,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router; // ✅ CommonJS export
+module.exports = router;

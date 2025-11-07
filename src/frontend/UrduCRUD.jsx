@@ -4,100 +4,131 @@ import { API_BASE_URL } from "./config";
 import { FaPlus, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 
 export default function UrduCRUD() {
-  const [urdu_alphabets, setUrdu] = useState([]);
+  const [urduAlphabets, setUrduAlphabets] = useState([]);
   const [formData, setFormData] = useState({
     alphabet: "",
     image_url: "",
     word: "",
     sound_text: "",
+    min_attempts: 3,
+    min_time_avg: 2.0,
+    min_correct_avg: 80,
   });
   const [editingId, setEditingId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    fetchUrdu();
+    fetchUrduAlphabets();
   }, []);
 
-  const fetchUrdu = async () => {
+  const fetchUrduAlphabets = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/urdu_alphabets`);
-      setUrdu(res.data);
+      setUrduAlphabets(res.data);
     } catch (err) {
-      console.error("Failed to fetch urdu alphabets", err);
+      console.error("Failed to fetch Urdu alphabets", err);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (editingId) {
-        const confirmUpdate = window.confirm("Are you sure you want to update this alphabet?");
-        if (!confirmUpdate) return;
-
         await axios.put(`${API_BASE_URL}/api/urdu_alphabets/${editingId}`, formData);
-        setEditingId(null);
       } else {
         await axios.post(`${API_BASE_URL}/api/urdu_alphabets`, formData);
       }
 
-      setFormData({ alphabet: "", image_url: "", word: "", sound_text: "" });
-      setShowForm(false);
-      fetchUrdu();
+      setFormData({
+        alphabet: "",
+        image_url: "",
+        word: "",
+        sound_text: "",
+        min_attempts: 3,
+        min_time_avg: 2.0,
+        min_correct_avg: 80,
+      });
+
+      setEditingId(null);
+      setShowPopup(false);
+      fetchUrduAlphabets();
     } catch (err) {
-      console.error("Error saving alphabet:", err);
+      console.error("Error saving Urdu alphabet:", err);
     }
   };
 
   const handleEdit = (item) => {
-    setFormData(item);
+    setFormData({
+      alphabet: item.alphabet,
+      image_url: item.image_url,
+      word: item.word,
+      sound_text: item.sound_text,
+      min_attempts: item.min_attempts,
+      min_time_avg: item.min_time_avg,
+      min_correct_avg: item.min_correct_avg,
+    });
     setEditingId(item._id);
-    setShowForm(true);
+    setShowPopup(true);
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this alphabet?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this Urdu alphabet?")) return;
 
     try {
       await axios.delete(`${API_BASE_URL}/api/urdu_alphabets/${id}`);
-      fetchUrdu();
+      fetchUrduAlphabets();
     } catch (err) {
-      console.error("Error deleting alphabet:", err);
+      console.error("Error deleting Urdu alphabet:", err);
     }
   };
 
+  const openPopup = () => {
+    setEditingId(null);
+    setFormData({
+      alphabet: "",
+      image_url: "",
+      word: "",
+      sound_text: "",
+      min_attempts: 3,
+      min_time_avg: 2.0,
+      min_correct_avg: 80,
+    });
+    setShowPopup(true);
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", fontFamily: "Poppins, sans-serif" }}>
       {/* Add Button */}
       <button
-        onClick={() => setShowForm(true)}
+        onClick={openPopup}
         style={{
           background: "#2BCB9A",
           color: "white",
           border: "none",
-          borderRadius: "5px",
-          padding: "10px 20px",
+          borderRadius: "8px",
+          padding: "10px 18px",
           fontSize: "16px",
+          fontWeight: "500",
           cursor: "pointer",
           marginBottom: "20px",
           display: "flex",
           alignItems: "center",
           gap: "8px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
         }}
       >
         <FaPlus /> Add Urdu Alphabet
       </button>
 
-      {/* Modal Form */}
-      {showForm && (
+      {/* Popup Form */}
+      {showPopup && (
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
             background: "rgba(0,0,0,0.4)",
             display: "flex",
             alignItems: "center",
@@ -107,154 +138,161 @@ export default function UrduCRUD() {
         >
           <div
             style={{
-              background: "#fff",
-              padding: "20px",
+              background: "white",
+              padding: "25px",
               borderRadius: "10px",
-              width: "400px",
-              position: "relative",
+              width: "500px",
               boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
             }}
           >
-            {/* Cross Button */}
-            <FaTimes
-              onClick={() => {
-                setShowForm(false);
-                setEditingId(null);
-                setFormData({ alphabet: "", image_url: "", word: "", sound_text: "" });
-              }}
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                cursor: "pointer",
-                color: "#555",
-                fontSize: "18px",
-              }}
-            />
-
-            <h3 style={{ marginBottom: "15px" }}>
-              {editingId ? "Update Alphabet" : "Add Alphabet"}
+            <h3 style={{ marginBottom: "15px", color: "#333", textAlign: "center" }}>
+              {editingId ? "Update Urdu Alphabet" : "Add Urdu Alphabet"}
             </h3>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {["alphabet", "image_url", "word", "sound_text"].map((field) => (
+                <input
+                  key={field}
+                  type="text"
+                  placeholder={field.replace("_", " ").toUpperCase()}
+                  value={formData[field]}
+                  onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                  required
+                  style={{
+                    padding: "10px",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                  }}
+                />
+              ))}
               <input
-                type="text"
-                placeholder="Alphabet"
-                value={formData.urdu}
-                onChange={(e) =>
-                  setFormData({ ...formData, alphabet: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                type="number"
+                placeholder="Min Attempts"
+                value={formData.min_attempts}
+                onChange={(e) => setFormData({ ...formData, min_attempts: Number(e.target.value) })}
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
               <input
-                type="text"
-                placeholder="Word"
-                value={formData.word}
-                onChange={(e) =>
-                  setFormData({ ...formData, word: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                type="number"
+                step="0.1"
+                placeholder="Min Time Avg"
+                value={formData.min_time_avg}
+                onChange={(e) => setFormData({ ...formData, min_time_avg: Number(e.target.value) })}
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
               <input
-                type="text"
-                placeholder="Image URL"
-                value={formData.image_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, image_url: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-              />
-              <input
-                type="text"
-                placeholder="Sound Text"
-                value={formData.sound_text}
-                onChange={(e) =>
-                  setFormData({ ...formData, sound_text: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                type="number"
+                placeholder="Min Correct Avg"
+                value={formData.min_correct_avg}
+                onChange={(e) => setFormData({ ...formData, min_correct_avg: Number(e.target.value) })}
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
 
-              <button
-                type="submit"
-                style={{
-                  background: "#2BCB9A",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 20px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  width: "100%",
-                }}
-              >
-                {editingId ? "Update" : "Add"}
-              </button>
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <button
+                  type="submit"
+                  style={{
+                    background: "#FFCF25",
+                    color: "#222",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "10px 16px",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    flex: 1,
+                  }}
+                >
+                  {editingId ? "Update" : "Add"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowPopup(false)}
+                  style={{
+                    background: "#EF3349",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "10px 16px",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    flex: 1,
+                  }}
+                >
+                  <FaTimes /> Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Simple List */}
-     {/* Simple List */}
-<ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr", // 2 columns
-    gap: "15px",
-  }}
->
-  {urdu_alphabets.map((item) => (
-    <li
-      key={item._id}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "10px",
-        background: "#e1f8f2",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-      }}
-    >
-      {/* Left Info */}
-      <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-        <img
-          src={item.image_url}
-          alt={item.word}
-          style={{
-            width: "50px",
-            height: "50px",
-            objectFit: "contain",
-            borderRadius: "5px",
-          }}
-        />
-        <div>
-          <strong>{item.alphabet}</strong> - {item.word}{" "}
-          <span style={{ color: "#777" }}>({item.sound_text})</span>
-        </div>
-      </div>
-
-      {/* Action Icons */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <FaEdit
-          style={{ cursor: "pointer", color: "#FFCF25" }}
-          onClick={() => handleEdit(item)}
-        />
-        <FaTrash
-          style={{ cursor: "pointer", color: "red" }}
-          onClick={() => handleDelete(item._id)}
-        />
-      </div>
-    </li>
-  ))}
-</ul>
-
+      {/* Table */}
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          background: "white",
+          borderRadius: "10px",
+          boxShadow: "0 3px 10px rgba(0,0,0,0.05)",
+          overflow: "hidden",
+        }}
+      >
+        <thead>
+          <tr style={{ background: "#2BCB9A", color: "white", textAlign: "left" }}>
+            <th style={{ padding: "12px" }}>Alphabet</th>
+            <th>Word</th>
+            <th>Image</th>
+            <th>Sound Text</th>
+            <th>Attempts</th>
+            <th>Time Avg</th>
+            <th>Correct %</th>
+            <th style={{ textAlign: "center" }}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {urduAlphabets.map((item) => (
+            <tr key={item._id} style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ padding: "10px" }}>{item.alphabet}</td>
+              <td>{item.word}</td>
+              <td>
+                <img src={item.image_url} alt={item.word} style={{ width: "50px", borderRadius: "6px" }} />
+              </td>
+              <td>{item.sound_text}</td>
+              <td>{item.min_attempts}</td>
+              <td>{item.min_time_avg}</td>
+              <td>{item.min_correct_avg}</td>
+              <td style={{ textAlign: "center" }}>
+                <button
+                  onClick={() => handleEdit(item)}
+                  style={{
+                    color: "#FFCF25",
+                    background: "none",
+                    border: "none",
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    marginRight: "10px",
+                  }}
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleDelete(item._id)}
+                  style={{
+                    color: "#EF3349",
+                    background: "none",
+                    border: "none",
+                    fontSize: "18px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FaTrash />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Button, Form, Alert } from "react-bootstrap";
+import { Card, Button, Form, Alert, Modal } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const API_URL = "http://localhost:5000/api/bodypartquiz";
@@ -19,6 +19,7 @@ const BodyPartsQuizAdmin = () => {
   const [answer, setAnswer] = useState("");
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchQuizData();
@@ -72,7 +73,7 @@ const BodyPartsQuizAdmin = () => {
     }
   };
 
-    const handleUpdate = async () => {
+  const handleUpdate = async () => {
     const validationError = validateFields();
     if (validationError) {
       setError(validationError);
@@ -82,6 +83,7 @@ const BodyPartsQuizAdmin = () => {
       alert("No question selected for editing!");
       return;
     }
+
     if (!window.confirm("Are you sure you want to update this question?")) return;
 
     try {
@@ -92,14 +94,14 @@ const BodyPartsQuizAdmin = () => {
       });
 
       alert("✅ Question updated successfully!");
-      fetchQuizData(); // reload data
-      resetForm(); // clear fields
+      fetchQuizData();
+      resetForm();
+      setShowEditModal(false);
     } catch (err) {
       console.error("Update error:", err);
       alert("❌ Failed to update question!");
     }
   };
-
 
   const handleDelete = async (quizId, questionId) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
@@ -117,6 +119,7 @@ const BodyPartsQuizAdmin = () => {
     setQuestion(q.question);
     setImageUrl(q.image_url);
     setAnswer(q.answer);
+    setShowEditModal(true); // ✅ Open the modal
   };
 
   return (
@@ -142,6 +145,7 @@ const BodyPartsQuizAdmin = () => {
         Body Parts Quiz Management
       </h2>
 
+      {/* ✅ Add Form */}
       <Card
         className="p-4 shadow-sm mb-5"
         style={{
@@ -202,44 +206,26 @@ const BodyPartsQuizAdmin = () => {
             />
           </Form.Group>
 
-          {editing ? (
-            <Button
-              onClick={handleUpdate}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaEdit /> Update
-            </Button>
-          ) : (
-            <Button
-              onClick={handleAdd}
-              style={{
-                backgroundColor: green,
-                color: "#fff",
-                fontWeight: "600",
-                padding: "10px 20px",
-                fontSize: "1.1rem",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FaPlus /> Add
-            </Button>
-          )}
+          <Button
+            onClick={handleAdd}
+            style={{
+              backgroundColor: green,
+              color: "#fff",
+              fontWeight: "600",
+              padding: "10px 20px",
+              fontSize: "1.1rem",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FaPlus /> Add
+          </Button>
         </Form>
       </Card>
 
+      {/* ✅ Existing Questions */}
       <div className="mb-5">
         <h4 style={{ marginBottom: "20px", color: textDark }}>Existing Questions</h4>
         {quizData.length === 0 ? (
@@ -305,9 +291,83 @@ const BodyPartsQuizAdmin = () => {
           )
         )}
       </div>
+
+      {/* ✅ Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Header closeButton style={{ backgroundColor: green, color: "#fff" }}>
+          <Modal.Title>Edit Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && (
+            <Alert variant="danger" style={{ fontWeight: "600", fontSize: "1rem" }}>
+              {error}
+            </Alert>
+          )}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Edit question"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Image URL</Form.Label>
+              <Form.Control
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Edit image URL"
+              />
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  width="100"
+                  height="100"
+                  className="mt-2"
+                  style={{ borderRadius: "10px", border: `2px solid ${yellow}` }}
+                />
+              )}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Correct Answer</Form.Label>
+              <Form.Control
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Edit correct answer"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowEditModal(false)}
+            style={{
+              backgroundColor: red,
+              border: "none",
+              fontWeight: "600",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            style={{
+              backgroundColor: yellow, // 💛 Updated color
+              border: "none",
+              fontWeight: "600",
+              color: "#000",
+            }}
+            onClick={handleUpdate}
+          >
+            <FaEdit /> Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
 export default BodyPartsQuizAdmin;
-

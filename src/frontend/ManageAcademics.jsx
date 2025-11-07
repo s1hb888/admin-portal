@@ -63,9 +63,6 @@ const ManageAcademics = () => {
           opacity: 0.08,
           zIndex: 0
         }}>
-          <FaBookOpen size={80} color={green} />
-          <FaChartLine size={80} color={red} />
-          <FaGraduationCap size={80} color={yellow} />
         </div>
 
         {/* Icon Badge */}
