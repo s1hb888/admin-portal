@@ -226,9 +226,8 @@ function Login() {
                    style={{ 
                      width: "70px", 
                      height: "70px", 
-                     background: "linear-gradient(135deg, #EF3349 0%, #c91d32 100%)",
+                     background: "#2BCB9A ",
                      borderRadius: "18px",
-                     boxShadow: "0 10px 25px rgba(239, 51, 73, 0.3)"
                    }}>
                 <FaShieldAlt size={32} color="white" />
               </div>
@@ -399,21 +398,12 @@ function Login() {
                 type="submit"
                 className="btn w-100 text-white fw-bold py-3 mb-3 border-0 position-relative overflow-hidden"
                 style={{
-                  background: "linear-gradient(135deg, #EF3349 0%, #c91d32 100%)",
+                  background: "#2BCB9A ",
                   borderRadius: "14px",
                   fontSize: "16px",
                   transition: "all 0.3s",
-                  boxShadow: "0 6px 16px rgba(239, 51, 73, 0.25)",
                   fontFamily: "'Inter', sans-serif",
                   letterSpacing: "0.3px"
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 10px 24px rgba(239, 51, 73, 0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "0 6px 16px rgba(239, 51, 73, 0.25)";
                 }}
               >
                 Sign In to Dashboard

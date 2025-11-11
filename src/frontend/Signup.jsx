@@ -392,22 +392,14 @@ function Signup() {
                   type="submit"
                   className="btn w-100 text-white fw-bold py-3 mb-3 border-0 position-relative overflow-hidden mt-4"
                   style={{
-                    background: "linear-gradient(135deg, #EF3349 0%, #c91d32 100%)",
+                    background: "#2BCB9A ",
                     borderRadius: "16px",
                     fontSize: "16px",
                     transition: "all 0.3s",
-                    boxShadow: "0 8px 20px rgba(239, 51, 73, 0.3)",
                     fontFamily: "'Inter', sans-serif",
                     letterSpacing: "0.5px"
                   }}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "translateY(-3px)";
-                    e.target.style.boxShadow = "0 12px 28px rgba(239, 51, 73, 0.45)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 8px 20px rgba(239, 51, 73, 0.3)";
-                  }}
+                  
                 >
                   Create Your Account
                 </button>
