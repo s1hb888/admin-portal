@@ -90,14 +90,17 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const admin = await Admins.findOne({ email });
 
+    // Check if admin exists
     if (!admin) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(404).json({ message: "Email not registered" });
     }
 
+    // Check if email is verified
     if (!admin.isVerified) {
-      return res.status(401).json({ message: "Please verify your email first." });
+      return res.status(403).json({ message: "Please verify your email first." });
     }
 
+    // Check if password matches
     if (await admin.matchPassword(password)) {
       res.json({
         _id: admin._id,
@@ -106,12 +109,14 @@ router.post("/login", async (req, res) => {
         token: generateToken(admin._id),
       });
     } else {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Incorrect password" });
     }
   } catch (err) {
     res.status(500).json({ message: "Error in Login", error: err.message });
   }
 });
+
+
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
@@ -186,7 +191,6 @@ router.post("/reset-password/:token", async (req, res) => {
     res.status(500).json({ message: "Error resetting password." });
   }
 });
-
 
 
 module.exports = router;

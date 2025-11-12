@@ -146,51 +146,56 @@ export default function DuaCrud() {
             </h3>
 
             <form onSubmit={handleSubmit}>
+              <label>Dua Name:</label>
               <input
                 type="text"
-                placeholder="Dua Name"
                 value={formData.dua_name}
                 onChange={(e) => setFormData({ ...formData, dua_name: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
+
+              <label>Image URL:</label>
               <input
                 type="text"
-                placeholder="Image URL"
                 value={formData.image_url}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
+
+              <label>Sound Dua URL:</label>
               <input
                 type="text"
-                placeholder="Sound Dua URL"
                 value={formData.sound_dua}
                 onChange={(e) => setFormData({ ...formData, sound_dua: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
+
+              <label>Dua (Arabic):</label>
               <textarea
-                placeholder="Dua (Arabic)"
                 value={formData.dua}
                 onChange={(e) => setFormData({ ...formData, dua: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
+
+              <label>Sound Translation URL:</label>
               <input
                 type="text"
-                placeholder="Sound Translation URL"
                 value={formData.sound_translation}
                 onChange={(e) => setFormData({ ...formData, sound_translation: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
+
+              <label>Translation:</label>
               <textarea
-                placeholder="Translation"
                 value={formData.translation}
                 onChange={(e) => setFormData({ ...formData, translation: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ display: "block", margin: "8px 0", padding: "8px", width: "100%" }}
               />
 
               <button
@@ -203,6 +208,7 @@ export default function DuaCrud() {
                   borderRadius: "5px",
                   cursor: "pointer",
                   width: "100%",
+                  marginTop: "10px",
                 }}
               >
                 {editingId ? "Update" : "Add"}

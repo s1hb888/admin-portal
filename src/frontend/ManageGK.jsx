@@ -47,14 +47,6 @@ const ManageGK = () => {
       bgPattern: '👤'
     },
     {
-      title: 'Counting (1-10)',
-      desc: 'Manage numbers from 1 to 10 with examples.',
-      icon: <FaHashtag size={32} />,
-      path: '/admin/counting-crud',
-      color: green,
-      bgPattern: '123'
-    },
-    {
       title: 'Islamic Studies',
       desc: 'Manage Islamic knowledge, duas, and values.',
       icon: <FaBookOpen size={32} />,

@@ -8,7 +8,6 @@ import Sidebar from '../components/Sidebar';
 import '../styles/ManageVideos.css';
 import { API_BASE_URL } from './config';
 
-
 import AddNewVideo from './AddNewVideo';
 const themeGreen = '#2BCB9A';
 const themeRed = '#EF3349';

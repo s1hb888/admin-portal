@@ -138,22 +138,27 @@ export default function BasicQuestionsCrud() {
               {editingId ? "Edit Question" : "Add Question"}
             </h3>
             <form onSubmit={handleSubmit}>
+              <label style={{ fontWeight: "bold", display: "block", marginBottom: "5px" }}>
+                Question:
+              </label>
               <input
                 type="text"
                 placeholder="Enter Question"
                 value={form.question}
-                onChange={(e) =>
-                  setForm({ ...form, question: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, question: e.target.value })}
                 required
                 style={{
                   width: "100%",
                   padding: "8px",
-                  marginBottom: "10px",
+                  marginBottom: "15px",
                   borderRadius: "6px",
                   border: "1px solid #ccc",
                 }}
               />
+
+              <label style={{ fontWeight: "bold", display: "block", marginBottom: "5px" }}>
+                Answer:
+              </label>
               <input
                 type="text"
                 placeholder="Enter Answer"
@@ -163,11 +168,12 @@ export default function BasicQuestionsCrud() {
                 style={{
                   width: "100%",
                   padding: "8px",
-                  marginBottom: "10px",
+                  marginBottom: "15px",
                   borderRadius: "6px",
                   border: "1px solid #ccc",
                 }}
               />
+
               <div style={{ textAlign: "right" }}>
                 <button
                   type="button"
@@ -178,6 +184,7 @@ export default function BasicQuestionsCrud() {
                     border: "none",
                     background: "#ccc",
                     borderRadius: "6px",
+                    cursor: "pointer",
                   }}
                 >
                   Cancel
@@ -190,6 +197,7 @@ export default function BasicQuestionsCrud() {
                     color: "#fff",
                     border: "none",
                     borderRadius: "6px",
+                    cursor: "pointer",
                   }}
                 >
                   {editingId ? "Update" : "Add"}

@@ -11,7 +11,7 @@ export default function MathsCRUD() {
     word: "",
     sound_text: "",
     min_attempts: 3,
-    min_time_avg: 2.0,
+    min_time_avg: 10,
     min_correct_avg: 80,
   });
   const [editingId, setEditingId] = useState(null);
@@ -48,7 +48,7 @@ export default function MathsCRUD() {
         word: "",
         sound_text: "",
         min_attempts: 3,
-        min_time_avg: 2.0,
+        min_time_avg: 10,
         min_correct_avg: 80,
       });
       fetchNumbers();
@@ -93,7 +93,7 @@ export default function MathsCRUD() {
             word: "",
             sound_text: "",
             min_attempts: 3,
-            min_time_avg: 2.0,
+            min_time_avg: 10,
             min_correct_avg: 80,
           });
           setShowPopup(true);
@@ -163,45 +163,86 @@ export default function MathsCRUD() {
               {editingId ? "Update Number" : "Add Number"}
             </h3>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {["number", "image_url", "word", "sound_text"].map((field) => (
-                <input
-                  key={field}
-                  type="text"
-                  placeholder={field.replace("_", " ").toUpperCase()}
-                  value={formData[field]}
-                  onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                  required
-                  style={{
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "6px",
-                  }}
-                />
-              ))}
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {/* Number */}
+              <label style={{ fontWeight: "500" }}>Number:</label>
+              <input
+                type="text"
+                placeholder="Enter Number"
+                value={formData.number}
+                onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Image URL */}
+              <label style={{ fontWeight: "500" }}>Image URL:</label>
+              <input
+                type="text"
+                placeholder="Enter Image URL"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Word */}
+              <label style={{ fontWeight: "500" }}>Word:</label>
+              <input
+                type="text"
+                placeholder="Enter Word"
+                value={formData.word}
+                onChange={(e) => setFormData({ ...formData, word: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Sound Text */}
+              <label style={{ fontWeight: "500" }}>Sound Text:</label>
+              <input
+                type="text"
+                placeholder="Enter Sound Text"
+                value={formData.sound_text}
+                onChange={(e) => setFormData({ ...formData, sound_text: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Minimum Attempts */}
+              <label style={{ fontWeight: "500" }}>Minimum Attempts:</label>
               <input
                 type="number"
+                min ="1"
                 placeholder="Min Attempts"
                 value={formData.min_attempts}
                 onChange={(e) => setFormData({ ...formData, min_attempts: Number(e.target.value) })}
                 style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
+
+              {/* Minimum Time Average */}
+              <label style={{ fontWeight: "500" }}>Minimum Time Average:</label>
               <input
                 type="number"
-                step="0.1"
+                step="1"
+                 min="1" 
                 placeholder="Min Time Avg"
                 value={formData.min_time_avg}
                 onChange={(e) => setFormData({ ...formData, min_time_avg: Number(e.target.value) })}
                 style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
+
+              {/* Minimum Correct Average */}
+              <label style={{ fontWeight: "500" }}>Minimum Correct Average (%):</label>
               <input
                 type="number"
+                min="1"
                 placeholder="Min Correct Avg"
                 value={formData.min_correct_avg}
                 onChange={(e) => setFormData({ ...formData, min_correct_avg: Number(e.target.value) })}
                 style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
 
+              {/* Buttons */}
               <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                 <button
                   type="submit"

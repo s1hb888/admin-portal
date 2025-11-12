@@ -60,14 +60,26 @@ const FruitQuizAdmin = () => {
       return;
     }
 
-    const newQuestion = { question, options, winner };
+    const newQuestion = {
+      question: question.trim(),
+      winner: winner.trim(),
+      options: options.map((opt) => ({
+        word: opt.word.trim(),
+        image_url: opt.image_url.trim(),
+        sound_text: opt.sound_text?.trim() || "",
+      })),
+    };
+
+    // Find existing quiz by title
+    const currentQuiz = quizData.find((q) => q.quiz_title === quizTitle);
+    if (!currentQuiz) {
+      alert("Quiz not found!");
+      return;
+    }
 
     try {
-      await axios.post(API_URL, {
-        quiz_title: quizTitle,
-        questions: [newQuestion],
-      });
-      alert("✅ Question added successfully!");
+      await axios.post(`${API_URL}/add-question`, newQuestion);
+      alert("✅ Question added successfully to the existing quiz!");
       fetchQuizData();
       resetForm();
     } catch (err) {
@@ -77,33 +89,41 @@ const FruitQuizAdmin = () => {
   };
 
   const handleUpdate = async () => {
-    const validationError = validateFields();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+  const validationError = validateFields();
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
 
-    if (!editing) {
-      alert("No question selected for editing!");
-      return;
-    }
+  if (!editing) return alert("No question selected for editing!");
 
-    try {
-      await axios.put(`${API_URL}/${editing.quizId}/${editing.questionId}`, {
-        question,
-        options,
-        winner,
-      });
-      alert("✅ Question updated successfully!");
-      fetchQuizData();
-      resetForm();
-      setEditing(null);
-      setShowEditModal(false);
-    } catch (err) {
-      console.error("Error updating question:", err);
-      alert("❌ Failed to update question!");
-    }
+  const updatedQuestion = {
+    question: question.trim(),
+    winner: winner.trim(),
+    options: options.map((opt) => ({
+      word: opt.word.trim(),
+      image_url: opt.image_url.trim(),
+      sound_text: opt.sound_text?.trim() || "",
+    })),
   };
+
+  try {
+    await axios.put(
+      `${API_URL}/update-question/${editing.quizId}/${editing.questionId}`,
+      updatedQuestion
+    );
+
+    alert("✅ Question updated successfully!");
+    fetchQuizData();
+    resetForm();
+    setEditing(null);
+    setShowEditModal(false);
+  } catch (err) {
+    console.error("❌ Error updating question:", err.response?.data || err.message);
+    alert("Failed to update question!");
+  }
+};
+
 
   const handleDelete = async (quizId, questionId) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
@@ -116,7 +136,6 @@ const FruitQuizAdmin = () => {
       alert("❌ Failed to delete question!");
     }
   };
-
   const handleEditClick = (quizId, q) => {
     setQuestion(q.question);
     setOptions(q.options);

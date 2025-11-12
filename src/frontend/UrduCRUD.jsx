@@ -11,7 +11,7 @@ export default function UrduCRUD() {
     word: "",
     sound_text: "",
     min_attempts: 3,
-    min_time_avg: 2.0,
+    min_time_avg: 10,
     min_correct_avg: 80,
   });
   const [editingId, setEditingId] = useState(null);
@@ -45,7 +45,7 @@ export default function UrduCRUD() {
         word: "",
         sound_text: "",
         min_attempts: 3,
-        min_time_avg: 2.0,
+        min_time_avg: 10,
         min_correct_avg: 80,
       });
 
@@ -90,7 +90,7 @@ export default function UrduCRUD() {
       word: "",
       sound_text: "",
       min_attempts: 3,
-      min_time_avg: 2.0,
+      min_time_avg: 10,
       min_correct_avg: 80,
     });
     setShowPopup(true);
@@ -149,44 +149,84 @@ export default function UrduCRUD() {
               {editingId ? "Update Urdu Alphabet" : "Add Urdu Alphabet"}
             </h3>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {["alphabet", "image_url", "word", "sound_text"].map((field) => (
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Alphabet:</span>
                 <input
-                  key={field}
                   type="text"
-                  placeholder={field.replace("_", " ").toUpperCase()}
-                  value={formData[field]}
-                  onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                  value={formData.alphabet}
+                  onChange={(e) => setFormData({ ...formData, alphabet: e.target.value })}
                   required
-                  style={{
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "6px",
-                  }}
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
                 />
-              ))}
-              <input
-                type="number"
-                placeholder="Min Attempts"
-                value={formData.min_attempts}
-                onChange={(e) => setFormData({ ...formData, min_attempts: Number(e.target.value) })}
-                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
-              />
-              <input
-                type="number"
-                step="0.1"
-                placeholder="Min Time Avg"
-                value={formData.min_time_avg}
-                onChange={(e) => setFormData({ ...formData, min_time_avg: Number(e.target.value) })}
-                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
-              />
-              <input
-                type="number"
-                placeholder="Min Correct Avg"
-                value={formData.min_correct_avg}
-                onChange={(e) => setFormData({ ...formData, min_correct_avg: Number(e.target.value) })}
-                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
-              />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Image URL:</span>
+                <input
+                  type="text"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  required
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Word:</span>
+                <input
+                  type="text"
+                  value={formData.word}
+                  onChange={(e) => setFormData({ ...formData, word: e.target.value })}
+                  required
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Sound Text:</span>
+                <input
+                  type="text"
+                  value={formData.sound_text}
+                  onChange={(e) => setFormData({ ...formData, sound_text: e.target.value })}
+                  required
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Minimum Attempts:</span>
+                <input
+                  type="number"
+                  min = "1"
+                  value={formData.min_attempts}
+                  onChange={(e) => setFormData({ ...formData, min_attempts: Number(e.target.value) })}
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Minimum Time Average:</span>
+                <input
+                  type="number"
+                  step="1"
+                   min="1" 
+                  value={formData.min_time_avg}
+                  onChange={(e) => setFormData({ ...formData, min_time_avg: Number(e.target.value) })}
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
+
+              <label>
+                <span style={{ fontWeight: "500", color: "#333" }}>Minimum Correct Percentage:</span>
+                <input
+                  type="number"
+                   min="1" 
+                  value={formData.min_correct_avg}
+                  onChange={(e) => setFormData({ ...formData, min_correct_avg: Number(e.target.value) })}
+                  style={{ width: "100%", padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+                />
+              </label>
 
               <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                 <button

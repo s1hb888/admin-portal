@@ -6,7 +6,6 @@ import { FaPlus, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 export default function VowelsCRUD() {
   const [vowels, setVowels] = useState([]);
   const [formData, setFormData] = useState({
-   
     image_url: "",
     sound_text: "",
     alphabet: "",
@@ -41,7 +40,7 @@ export default function VowelsCRUD() {
         await axios.post(`${API_BASE_URL}/api/vowels`, formData);
       }
 
-      setFormData({  image_url: "", sound_text: "", alphabet: "" });
+      setFormData({ image_url: "", sound_text: "", alphabet: "" });
       setShowForm(false);
       fetchVowels();
     } catch (err) {
@@ -68,7 +67,7 @@ export default function VowelsCRUD() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", fontFamily: "Poppins, sans-serif" }}>
       {/* Add Button */}
       <button
         onClick={() => setShowForm(true)}
@@ -84,6 +83,7 @@ export default function VowelsCRUD() {
           display: "flex",
           alignItems: "center",
           gap: "8px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
         }}
       >
         <FaPlus /> Add Vowel
@@ -108,14 +108,14 @@ export default function VowelsCRUD() {
           <div
             style={{
               background: "#fff",
-              padding: "20px",
+              padding: "25px",
               borderRadius: "10px",
-              width: "400px",
+              width: "420px",
               position: "relative",
               boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
             }}
           >
-            {/* Cross Button */}
+            {/* Close Button */}
             <FaTimes
               onClick={() => {
                 setShowForm(false);
@@ -127,57 +127,61 @@ export default function VowelsCRUD() {
                 top: "10px",
                 right: "10px",
                 cursor: "pointer",
-                color: "#555",
-                fontSize: "18px",
+                color: "#EF3349",
+                fontSize: "20px",
               }}
             />
 
-            <h3 style={{ marginBottom: "15px" }}>
+            <h3 style={{ marginBottom: "15px", textAlign: "center", color: "#333" }}>
               {editingId ? "Update Vowel" : "Add Vowel"}
             </h3>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              
+              {/* Alphabet Label */}
+              <label style={{ fontWeight: "500", color: "#333" }}>Alphabet:</label>
               <input
                 type="text"
-                placeholder="Image URL"
-                value={formData.image_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, image_url: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-              />
-              <input
-                type="text"
-                placeholder="Sound Text"
-                value={formData.sound_text}
-                onChange={(e) =>
-                  setFormData({ ...formData, sound_text: e.target.value })
-                }
-                required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-              />
-               <input
-                type="text"
-                placeholder="Alphabet"
+                placeholder="Enter Alphabet"
                 value={formData.alphabet}
-                onChange={(e) =>
-                  setFormData({ ...formData, alphabet: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, alphabet: e.target.value })}
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Image URL Label */}
+              <label style={{ fontWeight: "500", color: "#333" }}>Image URL:</label>
+              <input
+                type="text"
+                placeholder="Enter Image URL"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
+              />
+
+              {/* Sound Text Label */}
+              <label style={{ fontWeight: "500", color: "#333" }}>Sound Text:</label>
+              <input
+                type="text"
+                placeholder="Enter Sound Text"
+                value={formData.sound_text}
+                onChange={(e) => setFormData({ ...formData, sound_text: e.target.value })}
+                required
+                style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "6px" }}
               />
 
               <button
                 type="submit"
                 style={{
-                  background: "#2BCB9A",
-                  color: "white",
+                  background: "#FFCF25",
+                  color: "#222",
                   border: "none",
-                  padding: "10px 20px",
-                  borderRadius: "5px",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  fontWeight: "500",
                   cursor: "pointer",
-                  width: "100%",
+                  marginTop: "10px",
                 }}
               >
                 {editingId ? "Update" : "Add"}
@@ -187,64 +191,55 @@ export default function VowelsCRUD() {
         </div>
       )}
 
-      {/* Simple List */}
-     {/* Simple List */}
-<ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr", // 2 columns
-    gap: "15px",
-  }}
->
-  {vowels.map((item) => (
-    <li
-      key={item._id}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "10px",
-        background: "#e1f8f2",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-      }}
-    >
-      {/* Left Info */}
-      <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-        <img
-          src={item.image_url}
-          alt={item.word}
-          style={{
-            width: "50px",
-            height: "50px",
-            objectFit: "contain",
-            borderRadius: "5px",
-          }}
-        />
-        <div>
-          <strong>{item.alphabet}</strong> - {item.word}{" "}
-          <span style={{ color: "#777" }}>({item.sound_text})</span>
-        </div>
-      </div>
+      {/* Vowel List */}
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "15px",
+        }}
+      >
+        {vowels.map((item) => (
+          <li
+            key={item._id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "10px",
+              background: "#f7fffc",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+              <img
+                src={item.image_url}
+                alt={item.alphabet}
+                style={{ width: "50px", height: "50px", objectFit: "contain", borderRadius: "6px" }}
+              />
+              <div>
+                <strong style={{ fontSize: "18px" }}>{item.alphabet}</strong>
+                <div style={{ color: "#666", fontSize: "14px" }}>{item.sound_text}</div>
+              </div>
+            </div>
 
-      {/* Action Icons */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <FaEdit
-          style={{ cursor: "pointer", color: "#FFCF25" }}
-          onClick={() => handleEdit(item)}
-        />
-        <FaTrash
-          style={{ cursor: "pointer", color: "red" }}
-          onClick={() => handleDelete(item._id)}
-        />
-      </div>
-    </li>
-  ))}
-</ul>
-
+            <div style={{ display: "flex", gap: "12px" }}>
+              <FaEdit
+                style={{ cursor: "pointer", color: "#FFCF25" }}
+                onClick={() => handleEdit(item)}
+              />
+              <FaTrash
+                style={{ cursor: "pointer", color: "#EF3349" }}
+                onClick={() => handleDelete(item._id)}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

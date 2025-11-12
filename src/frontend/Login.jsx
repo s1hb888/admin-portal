@@ -47,7 +47,48 @@ function Login() {
       localStorage.setItem("adminToken", res.data.token);
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      const errorMessage = (err.response?.data?.message || "").toLowerCase();
+      const statusCode = err.response?.status;
+      
+      console.log("Login Error:", { errorMessage, statusCode, fullError: err.response?.data });
+      
+      // Priority 1: Check error MESSAGE for email not registered patterns
+      if (
+        errorMessage.includes("not found") ||
+        errorMessage.includes("not registered") ||
+        errorMessage.includes("does not exist") ||
+        errorMessage.includes("doesn't exist") ||
+        errorMessage.includes("no user") ||
+        errorMessage.includes("user not found") ||
+        errorMessage.includes("email not found") ||
+        errorMessage.includes("admin not found") ||
+        errorMessage.includes("no account")
+      ) {
+        setError("This email address is not registered. Please sign up first.");
+      } 
+      // Priority 2: Check for password-specific errors in message
+      else if (
+        errorMessage.includes("incorrect password") ||
+        errorMessage.includes("wrong password") ||
+        errorMessage.includes("invalid password") ||
+        errorMessage.includes("password is incorrect") ||
+        errorMessage.includes("password does not match") ||
+        errorMessage.includes("password mismatch")
+      ) {
+        setError("Incorrect password. Please try again.");
+      }
+      // Priority 3: Check status code 404 (user not found)
+      else if (statusCode === 404) {
+        setError("This email address is not registered. Please sign up first.");
+      }
+      // Priority 4: Status 401 with generic message
+      else if (statusCode === 401) {
+        setError("Invalid email or password. Please check your credentials.");
+      }
+      // Fallback: Show server message or generic error
+      else {
+        setError(err.response?.data?.message || "Login failed. Please try again.");
+      }
     }
   };
 

@@ -7,7 +7,6 @@ require("dotenv").config();
 
 // Routes imports
 const accountRoutes = require("./routes/accountRoutes");
-const countingRoutes = require("./routes/countingRoutes");
 const { uploadRouter, fetchRouter, deleteRouter } = require("./routes/videos");
 const alphabetRoutes = require("./routes/alphabetRoutes");
 const urduRoutes = require("./routes/urduRoutes"); 
@@ -64,7 +63,6 @@ app.use("/api/upload-video", uploadRouter);
 app.use("/api/videos", fetchRouter);
 app.use("/api/delete-video", deleteRouter);
 app.use("/uploads/videos", express.static(path.join(__dirname, "uploads/videos")));
-app.use("/api/counting", countingRoutes);
 app.use("/api/fruitquiz", fruitQuizRoutes);
 app.use("/api/vowelquiz", vowelQuizRoutes);
 app.use("/api/colorquiz", colorQuizRoutes);

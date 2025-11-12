@@ -40,7 +40,7 @@ export default function FruitsCRUD() {
         await axios.post(`${API_BASE_URL}/api/fruits`, formData);
       }
 
-      setFormData({word: "", image_url: "", sound_text: "" });
+      setFormData({ word: "", image_url: "", sound_text: "" });
       setShowForm(false);
       fetchFruits();
     } catch (err) {
@@ -119,7 +119,7 @@ export default function FruitsCRUD() {
               onClick={() => {
                 setShowForm(false);
                 setEditingId(null);
-                setFormData({word: "",  image_url: "", sound_text: "" });
+                setFormData({ word: "", image_url: "", sound_text: "" });
               }}
               style={{
                 position: "absolute",
@@ -136,36 +136,55 @@ export default function FruitsCRUD() {
             </h3>
 
             <form onSubmit={handleSubmit}>
-              
+              <label style={{ fontWeight: "bold" }}>Word:</label>
               <input
                 type="text"
-                placeholder="Word"
+                placeholder="Enter word"
                 value={formData.word}
                 onChange={(e) =>
                   setFormData({ ...formData, word: e.target.value })
                 }
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{
+                  display: "block",
+                  margin: "8px 0 12px 0",
+                  padding: "8px",
+                  width: "100%",
+                }}
               />
+
+              <label style={{ fontWeight: "bold" }}>Image URL:</label>
               <input
                 type="text"
-                placeholder="Image URL"
+                placeholder="Enter image URL"
                 value={formData.image_url}
                 onChange={(e) =>
                   setFormData({ ...formData, image_url: e.target.value })
                 }
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{
+                  display: "block",
+                  margin: "8px 0 12px 0",
+                  padding: "8px",
+                  width: "100%",
+                }}
               />
+
+              <label style={{ fontWeight: "bold" }}>Sound Text:</label>
               <input
                 type="text"
-                placeholder="Sound Text"
+                placeholder="Enter sound text"
                 value={formData.sound_text}
                 onChange={(e) =>
                   setFormData({ ...formData, sound_text: e.target.value })
                 }
                 required
-                style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+                style={{
+                  display: "block",
+                  margin: "8px 0 12px 0",
+                  padding: "8px",
+                  width: "100%",
+                }}
               />
 
               <button
@@ -188,63 +207,61 @@ export default function FruitsCRUD() {
       )}
 
       {/* Simple List */}
-     {/* Simple List */}
-<ul
-  style={{
-    listStyle: "none",
-    padding: 0,
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr", // 2 columns
-    gap: "15px",
-  }}
->
-  {fruits.map((item) => (
-    <li
-      key={item._id}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "10px",
-        background: "#e1f8f2",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-      }}
-    >
-      {/* Left Info */}
-      <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-        <img
-          src={item.image_url}
-          alt={item.word}
-          style={{
-            width: "50px",
-            height: "50px",
-            objectFit: "contain",
-            borderRadius: "5px",
-          }}
-        />
-        <div>
-          <strong>{item.alphabet}</strong> - {item.word}{" "}
-          <span style={{ color: "#777" }}>({item.sound_text})</span>
-        </div>
-      </div>
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr", // 2 columns
+          gap: "15px",
+        }}
+      >
+        {fruits.map((item) => (
+          <li
+            key={item._id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "10px",
+              background: "#e1f8f2",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            {/* Left Info */}
+            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+              <img
+                src={item.image_url}
+                alt={item.word}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "contain",
+                  borderRadius: "5px",
+                }}
+              />
+              <div>
+                <strong>{item.word}</strong>{" "}
+                <span style={{ color: "#777" }}>({item.sound_text})</span>
+              </div>
+            </div>
 
-      {/* Action Icons */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <FaEdit
-          style={{ cursor: "pointer", color: "#FFCF25" }}
-          onClick={() => handleEdit(item)}
-        />
-        <FaTrash
-          style={{ cursor: "pointer", color: "red" }}
-          onClick={() => handleDelete(item._id)}
-        />
-      </div>
-    </li>
-  ))}
-</ul>
-
+            {/* Action Icons */}
+            <div style={{ display: "flex", gap: "12px" }}>
+              <FaEdit
+                style={{ cursor: "pointer", color: "#FFCF25" }}
+                onClick={() => handleEdit(item)}
+              />
+              <FaTrash
+                style={{ cursor: "pointer", color: "red" }}
+                onClick={() => handleDelete(item._id)}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

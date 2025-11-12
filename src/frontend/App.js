@@ -27,7 +27,6 @@ import BodypartsCRUD from './BodypartsCRUD';
 import Profile from './Profile';
 import DuaCrud from "./DuaCrud"; 
 import BasicQuestionsCrud from "./BasicQuestionsCrud"; 
-import CountingCrud from "./CountingCrud";
 import FruitQuizAdmin from "./FruitQuizAdmin";
 import ColorQuizAdmin from "./ColorQuizAdmin";
 import VegetableQuizAdmin from "./VegetableQuizAdmin";
@@ -75,7 +74,6 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/admin/dua-crud" element={<DuaCrud />} />
         <Route path="/admin/basic-questions-crud" element={<BasicQuestionsCrud />} />
-        <Route path="/admin/counting-crud" element={<CountingCrud />} />
         <Route path="/fruit-quiz-admin" element={isLoggedIn ? <FruitQuizAdmin /> : <Navigate to="/admin/login" />} />
         <Route path="/color-quiz-admin" element={isLoggedIn ? <ColorQuizAdmin /> : <Navigate to="/admin/login" />} />
         <Route path="/vegetable-quiz-admin" element={isLoggedIn ? <VegetableQuizAdmin/> : <Navigate to="/admin/login" />} />
