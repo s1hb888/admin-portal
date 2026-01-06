@@ -59,7 +59,7 @@ The **Quiz Management** feature provides:
 
 ### 3️⃣ Quiz Configuration
 
-![Advanced Quiz Settings](./Quizzes 02.png)
+![Advanced Quiz Settings](./Quizzes%2002.png)
 
 Quiz configuration includes:
 
