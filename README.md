@@ -1,7 +1,5 @@
 # PrepPal Admin Portal 🎓
 
-![PrepPal Banner](./PrepPal%20Admin%20Portal.png)
-
 ## 📋 Overview
 
 **PrepPal Admin Portal** is a web-based administrative dashboard developed as part of the **PrepPal Final Year Project (FYP)**. It serves as the backend management interface for the PrepPal mobile application, allowing administrators to manage educational content and maintain platform data used by kids and parents in the mobile app.
